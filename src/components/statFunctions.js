@@ -1,15 +1,44 @@
 import {
   toDateString,
   TODAY,
-  YESTERDAY,
   ALL_365_DAYS,
   formatFrequency,
-  isHabitDueOn,
-  getLogForDate,
-  isCompletedOn,
 } from "./dateFunctions";
 
-//momentum calculation
+//habits logic (VERY IMPORTNT LOGIC DONT TOUCH)
+export function isHabitDueOn(habit, dateStr) {
+  if (dateStr < habit.createdAt) return false;
+  if (dateStr > TODAY) return false;
+
+  if (habit.frequency === "daily") {
+    return true;
+  }
+
+  if (habit.frequency === "weekly") {
+    const createdDate = new Date(habit.createdAt + "T12:00:00");
+    const targetDate = new Date(dateStr + "T12:00:00");
+    return targetDate.getDay() === createdDate.getDay();
+  }
+
+  if (habit.frequency?.type === "custom") {
+    const createdDate = new Date(habit.createdAt + "T12:00:00");
+    const targetDate = new Date(dateStr + "T12:00:00");
+    const daysDiff = Math.round((targetDate - createdDate) / 86400000); //magic number
+    return daysDiff >= 0 && daysDiff % habit.frequency.every === 0;
+  }
+
+  return false;
+}
+
+export function getLogForDate(habit, dateStr) {
+  return habit.logs.find((log) => log.date === dateStr) ?? null;
+}
+
+export function isCompletedOn(habit, dateStr) {
+  return getLogForDate(habit, dateStr)?.completed === true;
+}
+
+
 export function calculateMomentum(habit) {
   let momentum = 0;
 
@@ -32,7 +61,6 @@ export function calculateMomentum(habit) {
   return momentum;
 }
 
-//consistency calculation
 export function calculateConsistency(habit) {
   const pastDueDays = ALL_365_DAYS.filter(
     (day) => day < TODAY && isHabitDueOn(habit, day),
