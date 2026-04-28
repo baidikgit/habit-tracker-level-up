@@ -51,8 +51,8 @@ export default function App() {
     setHabits((prev) => [...prev, newHabit]);
   }
 
-  function deleteHabit(habit) {
-    console.log(habit.name);
+  function handleDeleteHabit(habitId){
+    setHabits(prev => prev.filter(habit => habit.id != habitId))
   }
 
   function handleLog(habitId, date, effort, fulfillment) {
@@ -118,6 +118,7 @@ export default function App() {
               fontWeight: 500,
               letterSpacing: "0.08em",
               color: "#888",
+              
               transition: "all 0.15s",
             }}
           >
@@ -145,6 +146,7 @@ export default function App() {
                 habit={habit}
                 habitIndex={index}
                 onLog={handleLog}
+                onDelete={handleDeleteHabit}
               />
             ))
           )}

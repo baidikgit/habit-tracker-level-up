@@ -29,7 +29,7 @@ import { StatBar } from "./StatBar";
 
 import { LogPanel } from "./LoggingPanel";
 
-export function HabitRow({ habit, habitIndex, onLog }) {
+export function HabitRow({ habit, habitIndex, onLog, onDelete }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isLogging, setIsLogging] = useState(false);
 
@@ -107,6 +107,7 @@ export function HabitRow({ habit, habitIndex, onLog }) {
           </span>
         ) : canLog ? (
           <button
+            title="Log for today"
             onClick={() => setIsLogging((prev) => !prev)}
             style={{
               padding: "8px 20px",
@@ -134,7 +135,23 @@ export function HabitRow({ habit, habitIndex, onLog }) {
             NOT DUE
           </span>
         )}
-
+        <button
+          title = "Delete this habit"
+          onClick = {() => onDelete(habit.id)}
+          style={{
+            padding: "8px 20px",
+            border: `1px solid ${isLogging ? "#444" : "#2a2a2a"}`,
+            borderRadius: 4,
+            backgroundColor: "#1a1a1a",
+            fontSize: 11,
+            fontWeight: 600,
+            letterSpacing: "0.15em",
+            color: isLogging ? "#555" : "#999",
+            transition: "all 0.15s",
+          }}
+        >
+          ✕
+        </button>
         {/* expand the menu */}
         <div
           onClick={() => setIsExpanded((prev) => !prev)}
