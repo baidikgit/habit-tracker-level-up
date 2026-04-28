@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   toDateString,
   TODAY,
@@ -36,7 +36,15 @@ import { AddHabitModal } from "./components/AddHabit.jsx";
 //actual app
 
 export default function App() {
-  const [habits, setHabits] = useState([]);
+  const [habits, setHabits] = useState(() => {
+    const saved = localStorage.getItem("levelup-habits");
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  useEffect(() => {
+  localStorage.setItem("levelup-habits", JSON.stringify(habits));
+}, [habits]);
+
   const [showAddModal, setShowAddModal] = useState(false);
 
   function handleAddHabit(habitData) {
@@ -51,8 +59,8 @@ export default function App() {
     setHabits((prev) => [...prev, newHabit]);
   }
 
-  function handleDeleteHabit(habitId){
-    setHabits(prev => prev.filter(habit => habit.id != habitId))
+  function handleDeleteHabit(habitId) {
+    setHabits((prev) => prev.filter((habit) => habit.id != habitId));
   }
 
   function handleLog(habitId, date, effort, fulfillment) {
@@ -118,7 +126,7 @@ export default function App() {
               fontWeight: 500,
               letterSpacing: "0.08em",
               color: "#888",
-              
+
               transition: "all 0.15s",
             }}
           >

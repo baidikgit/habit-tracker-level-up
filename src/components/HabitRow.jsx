@@ -32,7 +32,7 @@ import { LogPanel } from "./LoggingPanel";
 export function HabitRow({ habit, habitIndex, onLog, onDelete }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isLogging, setIsLogging] = useState(false);
-
+  const [habitToDelete, setHabitToDelete] = useState(null);
   const color = getHabitColor(habitIndex);
 
   const loggedToday = isCompletedOn(habit, TODAY);
@@ -136,8 +136,8 @@ export function HabitRow({ habit, habitIndex, onLog, onDelete }) {
           </span>
         )}
         <button
-          title = "Delete this habit"
-          onClick = {() => onDelete(habit.id)}
+          title="Delete this habit"
+          onClick={() => setHabitToDelete(habit.id)}
           style={{
             padding: "8px 20px",
             border: `1px solid ${isLogging ? "#444" : "#2a2a2a"}`,
@@ -152,6 +152,31 @@ export function HabitRow({ habit, habitIndex, onLog, onDelete }) {
         >
           ✕
         </button>
+        <div>
+          {habitToDelete && (
+            <div>
+              <p>Are you sure you want to delete this habit?</p>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  gap: "3rem"
+                }}
+              >
+                <button
+                  onClick={() => {
+                    onDelete(habitToDelete);
+                    setHabitToDelete(null);
+                  }}
+                >
+                  Yes
+                </button>
+                <button onClick={() => setHabitToDelete(null)}>Cancel</button>
+              </div>
+            </div>
+          )}
+        </div>
         {/* expand the menu */}
         <div
           onClick={() => setIsExpanded((prev) => !prev)}
