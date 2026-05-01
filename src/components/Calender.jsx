@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef,useEffect,useState } from "react";
 import {
   toDateString,
   TODAY,
@@ -21,10 +21,15 @@ import {
   fulfillmentToOpacity,
 } from "./colourFunctions";
 
-import { GLOBAL_CSS } from "./styling";
+//import { GLOBAL_CSS } from "./styling";
 
 export function Calendar365({ habit, habitColor }) {
+  const scrollRef = useRef(null);
   const rgbColor = hexToRgbString(habitColor);
+
+  useEffect(()=>{if(scrollRef.current){
+    scrollRef.current.scrollLeft = scrollRef.current.scrollWidth;
+  }},[]);
 
   const firstDayOfWeek = new Date(ALL_365_DAYS[0] + "T12:00:00").getDay(); // 0=Sun
   const paddedDays = [...Array(firstDayOfWeek).fill(null), ...ALL_365_DAYS];
@@ -42,14 +47,14 @@ export function Calendar365({ habit, habitColor }) {
     const log = getLogForDate(habit, day);
 
     if (!isDue) {
-      return "#1a1a1a"; // not a due day — near-invisible background
+      return "#1a1a1ab0"; // not a due day — near-invisible background
     }
     if (log?.completed) {
       const opacity = fulfillmentToOpacity(log.fulfillment);
       return `rgba(${rgbColor}, ${opacity})`; // habit color shaded by fulfillment
     }
     if (day < TODAY) {
-      return "#2a2a2a"; // due but missed
+      return "#363636"; // due but missed
     }
     return "#1e1e1e"; // due today, not yet logged
   }
@@ -82,7 +87,7 @@ export function Calendar365({ habit, habitColor }) {
         ))}
       </div>
       {/*horizontal scrolling*/}
-      <div style={{ overflowX: "auto", paddingBottom: 4 }}>
+      <div ref={scrollRef} style={{ overflowX: "auto", paddingBottom: 4 }}>
         <div style={{ display: "flex", gap: 3 }}>
           {weeks.map((week, weekIndex) => (
             <div

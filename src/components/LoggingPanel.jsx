@@ -14,8 +14,6 @@ import {
   calculateConsistency,
 } from "./statFunctions";
 
-import { GLOBAL_CSS } from "./styling";
-
 import {
   HABIT_COLOR_PALETTE,
   hexToRgbString,

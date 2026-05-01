@@ -6,28 +6,7 @@ import {
   formatFrequency,
 } from "./components/dateFunctions";
 
-import {
-  isHabitDueOn,
-  getLogForDate,
-  isCompletedOn,
-  calculateMomentum,
-  calculateConsistency,
-} from "./components/statFunctions";
-
-import { GLOBAL_CSS } from "./components/styling";
-
-import {
-  HABIT_COLOR_PALETTE,
-  hexToRgbString,
-  getHabitColor,
-  fulfillmentToOpacity,
-} from "./components/colourFunctions";
-
-import { Calendar365 } from "./components/Calender.jsx";
-
-import { StatBar } from "./components/StatBar.jsx";
-
-import { LogPanel } from "./components/LoggingPanel.jsx";
+//import { GLOBAL_CSS } from "./components/styling";
 
 import { HabitRow } from "./components/HabitRow.jsx";
 
@@ -42,8 +21,8 @@ export default function App() {
   });
 
   useEffect(() => {
-  localStorage.setItem("levelup-habits", JSON.stringify(habits));
-}, [habits]);
+    localStorage.setItem("levelup-habits", JSON.stringify(habits));
+  }, [habits]);
 
   const [showAddModal, setShowAddModal] = useState(false);
 
@@ -57,6 +36,14 @@ export default function App() {
       logs: [],
     };
     setHabits((prev) => [...prev, newHabit]);
+  }
+
+  function handleEditHabit(habitId, updatedData) {
+    setHabits((prev) =>
+      prev.map((habit) =>
+        habit.id === habitId ? { ...habit, ...updatedData } : habit,
+      ),
+    );
   }
 
   function handleDeleteHabit(habitId) {
@@ -79,7 +66,7 @@ export default function App() {
 
   return (
     <>
-      <style>{GLOBAL_CSS}</style>
+      {/*<style>{GLOBAL_CSS}</style>*/}
 
       <div style={{ maxWidth: 800, margin: "0 auto", paddingBottom: 80 }}>
         <div
@@ -155,6 +142,7 @@ export default function App() {
                 habitIndex={index}
                 onLog={handleLog}
                 onDelete={handleDeleteHabit}
+                onEdit={handleEditHabit}
               />
             ))
           )}

@@ -14,8 +14,6 @@ import {
   calculateConsistency,
 } from "./statFunctions";
 
-import { GLOBAL_CSS } from "./styling";
-
 import {
   HABIT_COLOR_PALETTE,
   hexToRgbString,
@@ -29,10 +27,14 @@ import { StatBar } from "./StatBar";
 
 import { LogPanel } from "./LoggingPanel";
 
-export function HabitRow({ habit, habitIndex, onLog, onDelete }) {
+import { EditHabitModal } from "./EditHabit.jsx";
+
+export function HabitRow({ habit, habitIndex, onLog, onDelete, onEdit }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isLogging, setIsLogging] = useState(false);
   const [habitToDelete, setHabitToDelete] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+
   const color = getHabitColor(habitIndex);
 
   const loggedToday = isCompletedOn(habit, TODAY);
@@ -52,42 +54,23 @@ export function HabitRow({ habit, habitIndex, onLog, onDelete }) {
   const consistency = calculateConsistency(habit);
 
   return (
-    <div style={{ borderBottom: "1px solid #1a1a1a" }}>
+    <div className="border-b border-theme-dark-grey">
       {/* main habit row*/}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          padding: "16px 24px",
-          gap: 16,
-        }}
-      >
+      <div className="flex items-center px-6 py-4 gap-4">
         <div
-          style={{
-            width: 3,
-            height: 38,
-            backgroundColor: color,
-            borderRadius: 2,
-            flexShrink: 0,
-          }}
+          className="w-[3px] h-[38px] rounded-[2px] shrink-0"
+          style={{ backgroundColor: color }}
         />
 
         {/* habit expands to stats */}
         <div
           onClick={() => setIsExpanded((prev) => !prev)}
-          style={{ flex: 1, cursor: "pointer" }}
+          className="flex-1 cursor-pointer"
         >
-          <div style={{ fontSize: 18, fontWeight: 400, marginBottom: 3 }}>
+          <div className="font-size-[18px] font-normal mb-[3px]">
             {habit.name}
           </div>
-          <div
-            style={{
-              fontSize: 11,
-              color: "#484848",
-              fontFamily: "'Iceberg', sans-serif",
-              letterSpacing: "0.05em",
-            }}
-          >
+          <div className="text-[11px] text-[#484848] font-iceberg tracking-wider">
             {formatFrequency(habit.frequency)} ·{" "}
             {habit.type === "positive" ? "Build" : "Break"}
           </div>
@@ -97,11 +80,9 @@ export function HabitRow({ habit, habitIndex, onLog, onDelete }) {
         {loggedToday ? (
           <span
             style={{
-              fontFamily: "'Iceberg', sans-serif",
-              fontSize: 10,
               color: color,
-              letterSpacing: "0.15em",
             }}
+            className="font-iceberg text-[10px] tracking-[0.15em]"
           >
             Accomplished
           </span>
@@ -109,128 +90,143 @@ export function HabitRow({ habit, habitIndex, onLog, onDelete }) {
           <button
             title="Log for today"
             onClick={() => setIsLogging((prev) => !prev)}
-            style={{
-              padding: "8px 20px",
-              border: `1px solid ${isLogging ? "#444" : "#2a2a2a"}`,
-              borderRadius: 4,
-              backgroundColor: "#1a1a1a",
-              fontSize: 11,
-              fontWeight: 600,
-              letterSpacing: "0.15em",
-              color: isLogging ? "#555" : "#999",
-              transition: "all 0.15s",
-            }}
+            className={`
+                        px-5 py-2 rounded-[4px] bg-[#1a1a1a] text-[11px] font-semibold tracking-[0.15em] transition-all duration-150
+                        hover:brightness-125 hover:border-gray-500
+                        ${isLogging ? "border-[#444] text-[#555]" : "border-[#2a2a2a] text-[#999]"}
+                        border
+                      `}
           >
             {isLogging ? "CANCEL" : "LOG"}
           </button>
         ) : (
-          <span
-            style={{
-              fontFamily: "'Iceberg', sans-serif",
-              fontSize: 10,
-              color: "#2a2a2a",
-              letterSpacing: "0.12em",
-            }}
-          >
+          <span className="font-iceberg text-[15px] text-[#2a2a2a] tracking-[0.12em]">
             NOT DUE
           </span>
         )}
+
+        <button
+          className={`
+                    px-5 py-2 rounded-[4px] bg-[#1a1a1a] text-[11px] font-semibold tracking-[0.15em] transition-all duration-150
+                    hover:brightness-125 hover:border-gray-500
+                    ${isLogging ? "border-[#444] text-[#555]" : "border-[#2a2a2a] text-[#999]"}
+                    border
+                  `}
+          title="Edit this habit"
+          onClick={() => setIsEditing(true)}
+        >
+          ✎
+        </button>
+
         <button
           title="Delete this habit"
           onClick={() => setHabitToDelete(habit.id)}
-          style={{
-            padding: "8px 20px",
-            border: `1px solid ${isLogging ? "#444" : "#2a2a2a"}`,
-            borderRadius: 4,
-            backgroundColor: "#1a1a1a",
-            fontSize: 11,
-            fontWeight: 600,
-            letterSpacing: "0.15em",
-            color: isLogging ? "#555" : "#999",
-            transition: "all 0.15s",
-          }}
+          className={`
+                    px-5 py-2 rounded-[4px] bg-[#1a1a1a] text-[11px] font-semibold tracking-[0.15em] transition-all duration-150
+                    hover:brightness-125 hover:border-gray-500
+                    ${isLogging ? "border-[#444] text-[#555]" : "border-[#2a2a2a] text-[#999]"}
+                    border
+                  `}
         >
           ✕
         </button>
+
+        {isEditing && (
+          <EditHabitModal
+            habit={habit}
+            onSave={(updatedData) => {
+              onEdit(habit.id, updatedData);
+              setIsEditing(false);
+            }}
+            onClose={() => setIsEditing(false)}
+          />
+        )}
+
         <div>
           {habitToDelete && (
-            <div>
+            <div className="animate-[fade-up_0.3s_ease-out_forwards]">
               <p>Are you sure you want to delete this habit?</p>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  gap: "3rem"
-                }}
-              >
+              <div className=" flex flex-row justify-center gap-12 ">
                 <button
                   onClick={() => {
                     onDelete(habitToDelete);
                     setHabitToDelete(null);
                   }}
+                  className="hover:brightness-50"
                 >
                   Yes
                 </button>
-                <button onClick={() => setHabitToDelete(null)}>Cancel</button>
+                <button
+                  onClick={() => setHabitToDelete(null)}
+                  className="
+                  hover:brightness-50"
+                >
+                  Cancel
+                </button>
               </div>
             </div>
           )}
+          
         </div>
         {/* expand the menu */}
         <div
           onClick={() => setIsExpanded((prev) => !prev)}
-          style={{
-            color: "#333",
-            fontSize: 12,
-            cursor: "pointer",
-            userSelect: "none",
-            transform: isExpanded ? "rotate(180deg)" : "none",
-            transition: "transform 0.2s",
-          }}
+          className={`
+                    text-[#333] 
+                    text-[12px] 
+                    cursor-pointer 
+                    select-none 
+                    transition-transform 
+                    duration-200 
+                    ${isExpanded ? "rotate-180" : "rotate-0"}
+                  `}
         >
           ▾
         </div>
       </div>
 
       {/* logging panel */}
-      {isLogging && (
-        <LogPanel
-          habitColor={color}
-          onConfirm={handleConfirmLog}
-          onCancel={() => setIsLogging(false)}
-        />
-      )}
+      <div
+        className={`grid transition-all duration-200 ease-in-out ${isLogging ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
+      >
+        <div className="overflow-hidden">
+          {
+            <LogPanel
+              habitColor={color}
+              onConfirm={handleConfirmLog}
+              onCancel={() => setIsLogging(false)}
+            />
+          }
+        </div>
+      </div>
 
       {/* expanded stats bars */}
-      {isExpanded && (
-        <div
-          style={{
-            padding: "22px 24px 28px",
-            borderTop: "1px solid #1a1a1a",
-            background: "#0d0d0d",
-          }}
-        >
-          <Calendar365 habit={habit} habitColor={color} />
+      <div
+        className={`grid transition-all duration-200 ease-in-out ${isExpanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
+      >
+        <div className="overflow-hidden">
+          <div className="pt-[22px] px-[24px] pb-[28px] border-t border-[#1a1a1a] bg-[#0d0d0d]">
+            <Calendar365 habit={habit} habitColor={color} />
 
-          <div style={{ marginTop: 26 }}>
-            <StatBar
-              label="Momentum"
-              value={momentum}
-              maxValue={Math.max(momentum, 30)}
-              displayValue={momentum}
-              color={color}
-            />
-            <StatBar
-              label="All-time consistency"
-              value={consistency}
-              maxValue={100}
-              displayValue={`${consistency}%`}
-              color={color}
-            />
+            <div className="mt-[26px]">
+              <StatBar
+                label="Momentum"
+                value={momentum}
+                maxValue={Math.max(momentum, 30)}
+                displayValue={momentum}
+                color={color}
+              />
+              <StatBar
+                label="All-time consistency"
+                value={consistency}
+                maxValue={100}
+                displayValue={`${consistency}%`}
+                color={color}
+              />
+            </div>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }
