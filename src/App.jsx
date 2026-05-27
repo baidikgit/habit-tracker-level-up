@@ -82,19 +82,18 @@ export default function App() {
             <div
               style={{
                 fontFamily: "'Iceberg', sans-serif",
-                fontSize: 10,
-                color: "#333",
-                letterSpacing: "0.35em",
+                fontSize: 20,
+                color: "#333333",
+                letterSpacing: "0.25em",
                 textTransform: "uppercase",
                 marginBottom: 8,
               }}
             >
-              LevelUP
+              Level UP
             </div>
             <div
               style={{
-                fontSize: 32,
-                fontWeight: 300,
+                fontSize: 35,
                 letterSpacing: "-0.01em",
               }}
             >
@@ -104,6 +103,8 @@ export default function App() {
 
           <button
             onClick={() => setShowAddModal(true)}
+            className="hover:brightness-125 hover:border-gray-500"
+            
             style={{
               padding: "10px 20px",
               border: "1px solid #2a2a2a",

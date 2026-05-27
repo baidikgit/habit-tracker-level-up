@@ -93,7 +93,7 @@ export function HabitRow({ habit, habitIndex, onLog, onDelete, onEdit }) {
             className={`
                         px-5 py-2 rounded-[4px] bg-[#1a1a1a] text-[11px] font-semibold tracking-[0.15em] transition-all duration-150
                         hover:brightness-125 hover:border-gray-500
-                        ${isLogging ? "border-[#444] text-[#555]" : "border-[#2a2a2a] text-[#999]"}
+                        ${isLogging ? "border-[#2a2a2a] text-[#555]" : "border-[#2a2a2a] text-[#999]"}
                         border
                       `}
           >
@@ -109,7 +109,7 @@ export function HabitRow({ habit, habitIndex, onLog, onDelete, onEdit }) {
           className={`
                     px-5 py-2 rounded-[4px] bg-[#1a1a1a] text-[11px] font-semibold tracking-[0.15em] transition-all duration-150
                     hover:brightness-125 hover:border-gray-500
-                    ${isLogging ? "border-[#444] text-[#555]" : "border-[#2a2a2a] text-[#999]"}
+                    ${isLogging ? "border-[#2a2a2a] text-[#555]" : "border-[#2a2a2a] text-[#999]"}
                     border
                   `}
           title="Edit this habit"
@@ -120,11 +120,11 @@ export function HabitRow({ habit, habitIndex, onLog, onDelete, onEdit }) {
 
         <button
           title="Delete this habit"
-          onClick={() => setHabitToDelete(habit.id)}
+          onClick={() => setHabitToDelete(habitToDelete? null: habit.id)}
           className={`
                     px-5 py-2 rounded-[4px] bg-[#1a1a1a] text-[11px] font-semibold tracking-[0.15em] transition-all duration-150
                     hover:brightness-125 hover:border-gray-500
-                    ${isLogging ? "border-[#444] text-[#555]" : "border-[#2a2a2a] text-[#999]"}
+                    ${isLogging ? "border-[#2a2a2a] text-[#555]" : "border-[#2a2a2a] text-[#999]"}
                     border
                   `}
         >
@@ -142,31 +142,28 @@ export function HabitRow({ habit, habitIndex, onLog, onDelete, onEdit }) {
           />
         )}
 
-        <div>
-          {habitToDelete && (
-            <div className="animate-[fade-up_0.3s_ease-out_forwards]">
-              <p>Are you sure you want to delete this habit?</p>
-              <div className=" flex flex-row justify-center gap-12 ">
-                <button
-                  onClick={() => {
-                    onDelete(habitToDelete);
-                    setHabitToDelete(null);
-                  }}
-                  className="hover:brightness-50"
-                >
-                  Yes
-                </button>
-                <button
-                  onClick={() => setHabitToDelete(null)}
-                  className="
-                  hover:brightness-50"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          )}
-          
+        {/*delete prompt*/}
+        <div
+          className={`flex-shrink-0 transition-all duration-200 ease-in-out overflow-hidden ${habitToDelete ? "max-w-xs opacity-100" : "max-w-0 opacity-0"}`}
+        >
+          <div className="pl-4 flex items-center gap-4 whitespace-nowrap">
+            <p className="text-m text-[#888]">Delete this habit?</p>
+            <button
+              onClick={() => {
+                onDelete(habitToDelete);
+                setHabitToDelete(null);
+              }}
+              className="text-red-500 text-sm hover:brightness-150"
+            >
+              Yes
+            </button>
+            <button
+              onClick={() => setHabitToDelete(null)}
+              className="text-[#555] text-sm hover:brightness-150"
+            >
+              Cancel
+            </button>
+          </div>
         </div>
         {/* expand the menu */}
         <div

@@ -2,15 +2,13 @@
 
 @import "tailwindcss";
 
-/* 1. External imports must be at the top, immediately after tailwind */
 
-/* 2. Theme variables must come BEFORE the base layer */
 @theme {
   --font-iceberg: "Iceberg", sans-serif;
   --color-theme-dark-grey: #1a1a1a;
 }
 
-/* 3. Base layer for element overrides */
+
 @layer base {
   *,
   *::before,
@@ -21,7 +19,7 @@
   }
 
   body {
-    background-color: #111111 !important; /* Added !important just to test override */
+    background-color: #111111 !important; 
     color: #e0e0e0;
     font-family: var(--font-iceberg);
     font-weight: 400;
@@ -43,7 +41,7 @@
   }
 }
 
-/* 4. Special selectors like scrollbars go outside the base layer */
+
 ::-webkit-scrollbar {
   width: 4px;
 }

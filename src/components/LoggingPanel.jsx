@@ -47,29 +47,14 @@ export function LogPanel({ habitColor, onConfirm, onCancel }) {
   }
 
   return (
-    <div
-      style={{
-        padding: "20px 24px 24px",
-        borderTop: "1px solid #1a1a1a",
-        background: "#0f0f0f",
-      }}
-    >
+    <div className="pt-[20px] px-[24px] pb-[24px] border-t border-[#1a1a1a] bg-[#0f0f0f]">
       {/* effort markers*/}
-      <div style={{ marginBottom: 20 }}>
-        <div
-          style={{
-            fontSize: 10,
-            color: "#444",
-            letterSpacing: "0.18em",
-            textTransform: "uppercase",
-            fontFamily: "'Iceberg', sans-serif",
-            marginBottom: 10,
-          }}
-        >
+      <div className="mb-[20px]">
+        <div className="text-[10px] text-[#444] tracking-[0.18em] uppercase font-iceberg mb-[10px]">
           How hard was it?
         </div>
 
-        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+        <div className="flex gap-[8px] items-center">
           {[1, 2, 3, 4, 5].map((number) => (
             <button
               key={number}
@@ -77,52 +62,32 @@ export function LogPanel({ habitColor, onConfirm, onCancel }) {
               title={EFFORT_LABELS[number - 1]}
               style={{
                 ...activeButtonStyle(effort === number),
-                width: 40,
-                height: 40,
-                fontSize: 15,
-                fontWeight: 500,
               }}
+              className={`w-10 h-10 text-[15px] font-medium rounded transition-all ${effort === number ? "border" : "border border-[#2e2e2e] bg-[#1a1a1a] text-[#555]"} hover:brightness-125 hover:border-gray-500`}
             >
               {number}
             </button>
           ))}
-          <span
-            style={{
-              fontSize: 10,
-              color: "#333",
-              marginLeft: 4,
-              fontFamily: "'Iceberg', sans-serif",
-            }}
-          >
+          <span className="text-[10px] text-[#333] ml-[4px] font-iceberg">
             Brutal → Effortless
           </span>
         </div>
       </div>
 
       {/* fulfillments */}
-      <div style={{ marginBottom: 22 }}>
-        <div
-          style={{
-            fontSize: 10,
-            color: "#444",
-            letterSpacing: "0.18em",
-            textTransform: "uppercase",
-            fontFamily: "'Iceberg', sans-serif",
-            marginBottom: 10,
-          }}
-        >
-          How well do you think you did that?
+      <div className="mb-[22px]">
+        <div className="text-[10px] text-[#444] tracking-[0.18em] uppercase font-iceberg mb-[10px]">
+          How well do you think you did?
         </div>
 
-        <div style={{ display: "flex", gap: 8 }}>
+        <div className="flex gap-[8px]">
           {FULFILLMENT_OPTIONS.map(({ value, label }) => (
             <button
               key={value}
               onClick={() => setFulfillment(value)}
+              className="py-[8px] px-[18px] text-[13px] hover:brightness-125 hover:border-gray-500"
               style={{
                 ...activeButtonStyle(fulfillment === value),
-                padding: "8px 18px",
-                fontSize: 13,
               }}
             >
               {label}
@@ -131,7 +96,7 @@ export function LogPanel({ habitColor, onConfirm, onCancel }) {
         </div>
       </div>
 
-      <div style={{ display: "flex", gap: 10 }}>
+      <div className="flex gap-[10px]">
         <button
           onClick={() => canConfirm && onConfirm(effort, fulfillment)}
           disabled={!canConfirm}
@@ -150,13 +115,7 @@ export function LogPanel({ habitColor, onConfirm, onCancel }) {
         </button>
         <button
           onClick={onCancel}
-          style={{
-            padding: "9px 18px",
-            border: "1px solid #2a2a2a",
-            borderRadius: 4,
-            fontSize: 13,
-            color: "#555",
-          }}
+          className="py-[9px] px-[18px] border border-[#2a2a2a] rounded-[4px] text-[13px] text-[#555]"
         >
           Cancel
         </button>
