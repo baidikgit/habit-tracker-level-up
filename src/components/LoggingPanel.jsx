@@ -40,21 +40,21 @@ export function LogPanel({ habitColor, onConfirm, onCancel }) {
       border: isActive ? `1px solid ${habitColor}` : "1px solid #2e2e2e",
       borderRadius: 4,
       backgroundColor: isActive ? `rgba(${rgbColor}, 0.15)` : "#1a1a1a",
-      color: isActive ? habitColor : "#555",
+      color: isActive ? habitColor : "#aaaaaa",
       transition: "all 0.1s",
       cursor: "pointer",
     };
   }
 
   return (
-    <div className="pt-[20px] px-[24px] pb-[24px] border-t border-[#1a1a1a] bg-[#0f0f0f]">
+    <div className="pt-[20px] px-[24px] pb-[24px] border-t border-[#1a1a1a] bg-[#0f0f0f] shadow-[inset_1px_1px_1px_1px_#050505,inset_-1px_-1px_1px_1px_#1a1a1a]">
       {/* effort markers*/}
       <div className="mb-[20px]">
-        <div className="text-[10px] text-[#444] tracking-[0.18em] uppercase font-iceberg mb-[10px]">
-          How hard was it?
+        <div className="text-[10px] text-[#C9C9C9] tracking-[0.18em] uppercase font-iceberg mb-[10px]">
+          How easy was it?
         </div>
 
-        <div className="flex gap-[8px] items-center">
+        <div className="flex gap-[8px] items-center ">
           {[1, 2, 3, 4, 5].map((number) => (
             <button
               key={number}
@@ -68,7 +68,7 @@ export function LogPanel({ habitColor, onConfirm, onCancel }) {
               {number}
             </button>
           ))}
-          <span className="text-[10px] text-[#333] ml-[4px] font-iceberg">
+          <span className="text-[10px] text-[#888888] ml-[4px] font-iceberg">
             Brutal → Effortless
           </span>
         </div>
@@ -76,7 +76,7 @@ export function LogPanel({ habitColor, onConfirm, onCancel }) {
 
       {/* fulfillments */}
       <div className="mb-[22px]">
-        <div className="text-[10px] text-[#444] tracking-[0.18em] uppercase font-iceberg mb-[10px]">
+        <div className="text-[10px] text-[#C9C9C9] tracking-[0.18em] uppercase font-iceberg mb-[10px]">
           How well do you think you did?
         </div>
 

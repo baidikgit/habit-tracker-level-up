@@ -33,7 +33,7 @@ export function StatBar({ label, value, maxValue, displayValue, color }) {
           justifyContent: "space-between",
           marginBottom: 6,
           fontSize: 10,
-          color: "#484848",
+          color: "#aaaaaa",
           fontFamily: "'Iceberg', sans-serif",
           letterSpacing: "0.12em",
           textTransform: "uppercase",

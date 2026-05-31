@@ -54,7 +54,7 @@ export function HabitRow({ habit, habitIndex, onLog, onDelete, onEdit }) {
   const consistency = calculateConsistency(habit);
 
   return (
-    <div className="border-b border-theme-dark-grey">
+    <div className="border-b border-theme-dark-grey shadow-[inset_1px_0px_1px_1px_#050505,inset_-1px_-1px_1px_1px_#1a1a1a]">
       {/* main habit row*/}
       <div className="flex items-center px-6 py-4 gap-4">
         <div
@@ -70,7 +70,7 @@ export function HabitRow({ habit, habitIndex, onLog, onDelete, onEdit }) {
           <div className="font-size-[18px] font-normal mb-[3px]">
             {habit.name}
           </div>
-          <div className="text-[11px] text-[#484848] font-iceberg tracking-wider">
+          <div className="text-[11px] text-[#888888] font-iceberg tracking-wider">
             {formatFrequency(habit.frequency)} ·{" "}
             {habit.type === "positive" ? "Build" : "Break"}
           </div>
@@ -92,7 +92,7 @@ export function HabitRow({ habit, habitIndex, onLog, onDelete, onEdit }) {
             onClick={() => setIsLogging((prev) => !prev)}
             className={`
                         px-5 py-2 rounded-[4px] bg-[#1a1a1a] text-[11px] font-semibold tracking-[0.15em] transition-all duration-150
-                        hover:brightness-125 hover:border-gray-500
+                        hover:brightness-125
                         ${isLogging ? "border-[#2a2a2a] text-[#555]" : "border-[#2a2a2a] text-[#999]"}
                         border
                       `}
@@ -100,7 +100,7 @@ export function HabitRow({ habit, habitIndex, onLog, onDelete, onEdit }) {
             {isLogging ? "CANCEL" : "LOG"}
           </button>
         ) : (
-          <span className="font-iceberg text-[15px] text-[#2a2a2a] tracking-[0.12em]">
+          <span className="font-iceberg text-[14px] text-[#4a4a4a] tracking-[0.12em]">
             NOT DUE
           </span>
         )}
@@ -108,7 +108,7 @@ export function HabitRow({ habit, habitIndex, onLog, onDelete, onEdit }) {
         <button
           className={`
                     px-5 py-2 rounded-[4px] bg-[#1a1a1a] text-[11px] font-semibold tracking-[0.15em] transition-all duration-150
-                    hover:brightness-125 hover:border-gray-500
+                    hover:brightness-125
                     ${isLogging ? "border-[#2a2a2a] text-[#555]" : "border-[#2a2a2a] text-[#999]"}
                     border
                   `}
@@ -123,7 +123,7 @@ export function HabitRow({ habit, habitIndex, onLog, onDelete, onEdit }) {
           onClick={() => setHabitToDelete(habitToDelete? null: habit.id)}
           className={`
                     px-5 py-2 rounded-[4px] bg-[#1a1a1a] text-[11px] font-semibold tracking-[0.15em] transition-all duration-150
-                    hover:brightness-125 hover:border-gray-500
+                    hover:brightness-125
                     ${isLogging ? "border-[#2a2a2a] text-[#555]" : "border-[#2a2a2a] text-[#999]"}
                     border
                   `}
@@ -202,7 +202,7 @@ export function HabitRow({ habit, habitIndex, onLog, onDelete, onEdit }) {
         className={`grid transition-all duration-200 ease-in-out ${isExpanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
       >
         <div className="overflow-hidden">
-          <div className="pt-[22px] px-[24px] pb-[28px] border-t border-[#1a1a1a] bg-[#0d0d0d]">
+          <div className="pt-[22px] px-[24px] pb-[28px] border-t border-[#1a1a1a] bg-[#0d0d0d] shadow-[inset_1px_1px_1px_1px_#050505,inset_-1px_-1px_1px_1px_#1a1a1a]">
             <Calendar365 habit={habit} habitColor={color} />
 
             <div className="mt-[26px]">
@@ -214,7 +214,7 @@ export function HabitRow({ habit, habitIndex, onLog, onDelete, onEdit }) {
                 color={color}
               />
               <StatBar
-                label="All-time consistency"
+                label="Consistency"
                 value={consistency}
                 maxValue={100}
                 displayValue={`${consistency}%`}

@@ -4,6 +4,7 @@ import { useState } from "react";
 export function AddHabitModal({ onSave, onClose }) {
   const [name, setName] = useState("");
   const [frequency, setFrequency] = useState("daily");
+  const [timesCount, setTimesCount] = useState(1);
   const [customDays, setCustomDays] = useState(2);
   const [type, setType] = useState("positive");
 
@@ -12,7 +13,11 @@ export function AddHabitModal({ onSave, onClose }) {
 
     const frequencyValue =
       frequency === "custom"
-        ? { type: "custom", every: Math.max(2, customDays) }
+        ? { type: "custom", every: Math.max(2,customDays) }
+        : frequency === "weekly"
+        ? {type: "weekly_count", times: Math.max(1,timesCount)}
+        : frequency === "monthly"
+        ? {type: "monthly_count", times: Math.max(1,timesCount)}
         : frequency;
 
     onSave({ name: name.trim(), frequency: frequencyValue, type });
@@ -125,6 +130,13 @@ export function AddHabitModal({ onSave, onClose }) {
             >
               Weekly
             </SegmentButton>
+            <SegmentButton 
+              value="monthly" 
+              currentValue={frequency} 
+              onSelect={setFrequency}
+            >
+              Monthly
+            </SegmentButton>
             <SegmentButton
               value="custom"
               currentValue={frequency}
@@ -133,6 +145,22 @@ export function AddHabitModal({ onSave, onClose }) {
               Custom
             </SegmentButton>
           </div>
+
+          {(frequency === "weekly" || frequency === "monthly")&&(
+            <div style={{display: "flex" ,alignItems: "center", gap: 10, marginTop: 12 }}>
+              <input
+                type="number"
+                min={1}
+                max={frequency === "weekly" ? 7 : 31}
+                value={timesCount}
+                onChange={e => setTimesCount(Number(e.target.value))}
+                style={textInputStyle}
+              />
+              <span style={{ fontSize: 13, color: "#b7b7b7" }}>
+                {frequency === "weekly" ? "times / week" : "times / month"}
+              </span>
+            </div>
+          )}
 
           {frequency === "custom" && (
             <div
@@ -143,7 +171,7 @@ export function AddHabitModal({ onSave, onClose }) {
                 marginTop: 12,
               }}
             >
-              <span style={{ fontSize: 13, color: "#555" }}>Every</span>
+              <span style={{ fontSize: 13, color: "#555" }}>Once every</span>
               <input
                 type="number"
                 min={2}

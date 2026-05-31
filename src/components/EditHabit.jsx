@@ -6,14 +6,19 @@ export function EditHabitModal({ habit, onSave, onClose }) {
     habit.frequency?.type === "custom" ? "custom" : habit.frequency,
   );
   const [customDays, setCustomDays] = useState(habit.frequency?.every ?? 2);
+  const [timesCount, setTimesCount] = useState(habit.frequency?.type === "weekly_count" || habit.frequency?.type === "monthly_count" ? habit.frequency.times : 1);
   const [type, setType] = useState(habit.type);
 
   function handleSave() {
     if (!name.trim()) return;
 
     const frequencyValue =
-      frequency === "custom"
-        ? { type: "custom", every: Math.max(2, customDays) }
+     frequency === "custom"
+        ? { type: "custom", every: Math.max(2,customDays) }
+        : frequency === "weekly"
+        ? {type: "weekly_count", times: Math.max(1,timesCount)}
+        : frequency === "monthly"
+        ? {type: "monthly_count", times: Math.max(1,timesCount)}
         : frequency;
 
     onSave({ name: name.trim(), frequency: frequencyValue, type });
@@ -126,6 +131,13 @@ export function EditHabitModal({ habit, onSave, onClose }) {
             >
               Weekly
             </SegmentButton>
+            <SegmentButton 
+              value="monthly" 
+              currentValue={frequency} 
+              onSelect={setFrequency}
+            >
+              Monthly
+            </SegmentButton>
             <SegmentButton
               value="custom"
               currentValue={frequency}
@@ -134,6 +146,21 @@ export function EditHabitModal({ habit, onSave, onClose }) {
               Custom
             </SegmentButton>
           </div>
+          {(frequency === "weekly" || frequency === "monthly")&&(
+            <div style={{display: "flex" ,alignItems: "center", gap: 10, marginTop: 12 }}>
+            <input
+              type="number"
+              min={1}
+              max={frequency === "weekly" ? 7 : 31}
+              value={timesCount}
+              onChange={e => setTimesCount(Number(e.target.value))}
+              style={textInputStyle}
+            />
+            <span style={{ fontSize: 13, color: "#b7b7b7" }}>
+              {frequency === "weekly" ? "times / week" : "times / month"}
+            </span>
+          </div>
+          )}
 
           {frequency === "custom" && (
             <div

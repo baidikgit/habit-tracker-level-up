@@ -27,6 +27,10 @@ export function isHabitDueOn(habit, dateStr) {
     return daysDiff >= 0 && daysDiff % habit.frequency.every === 0;
   }
 
+  if (habit.frequency?.type === "weekly_count" || habit.frequency?.type === "monthly_count") {
+  return true;
+  } 
+
   return false;
 }
 
@@ -38,6 +42,22 @@ export function isCompletedOn(habit, dateStr) {
   return getLogForDate(habit, dateStr)?.completed === true;
 }
 
+function countLogsInWeek(habit, weekStartDate) {
+  return habit.logs.filter(log => {
+    const logDate = new Date(log.date + "T12:00:00");
+    const start   = new Date(weekStartDate + "T12:00:00");
+    const end     = new Date(start);
+    end.setDate(end.getDate() + 7);
+    return log.completed && logDate >= start && logDate < end;
+  }).length;
+}
+
+function countLogsInMonth(habit, year, month) {
+  return habit.logs.filter(log => {
+    const d = new Date(log.date + "T12:00:00");
+    return log.completed && d.getFullYear() === year && d.getMonth() === month;
+  }).length;
+}
 
 export function calculateMomentum(habit) {
   let momentum = 0;

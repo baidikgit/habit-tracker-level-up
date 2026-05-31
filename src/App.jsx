@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
+
 import {
   toDateString,
   TODAY,
   ALL_365_DAYS,
   formatFrequency,
 } from "./components/dateFunctions";
-
-//import { GLOBAL_CSS } from "./components/styling";
 
 import { HabitRow } from "./components/HabitRow.jsx";
 
@@ -66,7 +66,46 @@ export default function App() {
 
   return (
     <>
-      {/*<style>{GLOBAL_CSS}</style>*/}
+    
+    <div style={{ position: "absolute", top: 30, right: 50, zIndex: 50 }}>
+      
+      <SignedOut>
+        <SignInButton mode="modal">
+          <button
+            className="hover:brightness-125 hover:border-gray-500"
+            style={{
+              padding: "8px 16px",
+              
+              border: "1px solid #10b981",
+              borderRadius: 4,
+              background: "#161616",
+              fontSize: 12,
+              fontWeight: 600, 
+              letterSpacing: "0.08em",
+              color: "#10b981", 
+              cursor: "pointer",
+              textTransform: "uppercase",
+              boxShadow: "0 0 10px rgba(16, 185, 129, 0.1)",
+              transition: "all 0.15s",
+            }}
+          >
+            Sign In
+          </button>
+        </SignInButton>
+      </SignedOut>
+
+      {/* If logged in, show the Clerk user avatar */}
+      <SignedIn>
+          <UserButton 
+          afterSignOutUrl="/" 
+          appearance={{
+            elements: {
+              avatarBox: { width: 40, height: 40, border: "1px solid #2a2a2a" }
+            }
+          }}
+        />
+      </SignedIn>
+    </div>
 
       <div style={{ maxWidth: 800, margin: "0 auto", paddingBottom: 80 }}>
         <div
@@ -83,14 +122,16 @@ export default function App() {
               style={{
                 fontFamily: "'Iceberg', sans-serif",
                 fontSize: 20,
-                color: "#333333",
+                color: "#10b981",
                 letterSpacing: "0.25em",
                 textTransform: "uppercase",
+                textShadow: '0 0 8px rgba(16, 185, 129, 0.4)',
                 marginBottom: 8,
               }}
             >
-              Level UP
+              Level-UP
             </div>
+            
             <div
               style={{
                 fontSize: 35,
@@ -100,14 +141,14 @@ export default function App() {
               Habits
             </div>
           </div>
-
+          
+          
           <button
             onClick={() => setShowAddModal(true)}
-            className="hover:brightness-125 hover:border-gray-500"
+            className="hover:brightness-125 shadow-[inset_1px_0px_1px_1px_#050505,inset_-1px_-1px_1px_1px_#1a1a1a]"
             
             style={{
               padding: "10px 20px",
-              border: "1px solid #2a2a2a",
               borderRadius: 4,
               background: "#161616",
               fontSize: 12,
@@ -120,6 +161,7 @@ export default function App() {
           >
             + Add Habit
           </button>
+          
         </div>
 
         <div>

@@ -19,5 +19,7 @@ export function formatFrequency(frequency) {
   if (frequency === "daily") return "Daily";
   if (frequency === "weekly") return "Weekly";
   if (frequency?.type === "custom") return `Every ${frequency.every} days`;
+  if(frequency?.type === "weekly_count") return `${frequency.times}x per week`;
+  if (frequency?.type === "monthly_count") return `${frequency.times}x per month`;
   return "—";
 }
