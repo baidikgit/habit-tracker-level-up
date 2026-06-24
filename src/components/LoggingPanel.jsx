@@ -26,13 +26,13 @@ export function LogPanel({ habitColor, onConfirm, onCancel }) {
   const [fulfillment, setFulfillment] = useState(null);
 
   const rgbColor = hexToRgbString(habitColor);
-  const canConfirm = effort !== null && fulfillment !== null;
+  const canConfirm = fulfillment !== null; //effort !== null;
 
   const EFFORT_LABELS = ["Brutal", "Hard", "Moderate", "Easy", "Effortless"];
   const FULFILLMENT_OPTIONS = [
-    { value: 1, label: "Subpar" },
-    { value: 2, label: "Average" },
-    { value: 3, label: "Splendid" },
+    { value: 1, label: "Minimum Threshold" },
+    { value: 2, label: "Standard Goals Hit" },
+    { value: 3, label: "Exceeded Expectations" },
   ];
 
   function activeButtonStyle(isActive) {
@@ -46,34 +46,35 @@ export function LogPanel({ habitColor, onConfirm, onCancel }) {
     };
   }
 
+  // maybe implement some AI feature later on.
+  //{/* effort markers*/}
+  //       <div className="mb-[20px]">
+  //         <div className="text-[10px] text-[#C9C9C9] tracking-[0.18em] uppercase font-iceberg mb-[10px]">
+  //           How easy was it?
+  //         </div>
+
+  //         <div className="flex gap-[8px] items-center ">
+  //           {[1, 2, 3, 4, 5].map((number) => (
+  //             <button
+  //               key={number}
+  //               onClick={() => setEffort(number)}
+  //               title={EFFORT_LABELS[number - 1]}
+  //               style={{
+  //                 ...activeButtonStyle(effort === number),
+  //               }}
+  //               className={`w-10 h-10 text-[15px] font-medium rounded transition-all ${effort === number ? "border" : "border border-[#2e2e2e] bg-[#1a1a1a] text-[#555]"} hover:brightness-125 hover:border-gray-500`}
+  //             >
+  //               {number}
+  //             </button>
+  //           ))}
+  //           <span className="text-[10px] text-[#888888] ml-[4px] font-iceberg">
+  //             Brutal → Effortless
+  //           </span>
+  //         </div>
+  //       </div>
+
   return (
     <div className="pt-[20px] px-[24px] pb-[24px] border-t border-[#1a1a1a] bg-[#0f0f0f] shadow-[inset_1px_1px_1px_1px_#050505,inset_-1px_-1px_1px_1px_#1a1a1a]">
-      {/* effort markers*/}
-      <div className="mb-[20px]">
-        <div className="text-[10px] text-[#C9C9C9] tracking-[0.18em] uppercase font-iceberg mb-[10px]">
-          How easy was it?
-        </div>
-
-        <div className="flex gap-[8px] items-center ">
-          {[1, 2, 3, 4, 5].map((number) => (
-            <button
-              key={number}
-              onClick={() => setEffort(number)}
-              title={EFFORT_LABELS[number - 1]}
-              style={{
-                ...activeButtonStyle(effort === number),
-              }}
-              className={`w-10 h-10 text-[15px] font-medium rounded transition-all ${effort === number ? "border" : "border border-[#2e2e2e] bg-[#1a1a1a] text-[#555]"} hover:brightness-125 hover:border-gray-500`}
-            >
-              {number}
-            </button>
-          ))}
-          <span className="text-[10px] text-[#888888] ml-[4px] font-iceberg">
-            Brutal → Effortless
-          </span>
-        </div>
-      </div>
-
       {/* fulfillments */}
       <div className="mb-[22px]">
         <div className="text-[10px] text-[#C9C9C9] tracking-[0.18em] uppercase font-iceberg mb-[10px]">

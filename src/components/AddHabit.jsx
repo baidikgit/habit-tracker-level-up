@@ -1,24 +1,24 @@
 import { useState } from "react";
 
-
 export function AddHabitModal({ onSave, onClose }) {
   const [name, setName] = useState("");
   const [frequency, setFrequency] = useState("daily");
   const [timesCount, setTimesCount] = useState(1);
   const [customDays, setCustomDays] = useState(2);
   const [type, setType] = useState("positive");
+  const [timesCountInput, setTimesCountInput] = useState(String(timesCount));
 
   function handleSave() {
     if (!name.trim()) return;
 
     const frequencyValue =
       frequency === "custom"
-        ? { type: "custom", every: Math.max(2,customDays) }
+        ? { type: "custom", every: Math.max(2, customDays) }
         : frequency === "weekly"
-        ? {type: "weekly_count", times: Math.max(1,timesCount)}
-        : frequency === "monthly"
-        ? {type: "monthly_count", times: Math.max(1,timesCount)}
-        : frequency;
+          ? { type: "weekly_count", times: Math.max(1, timesCount) }
+          : frequency === "monthly"
+            ? { type: "monthly_count", times: Math.max(1, timesCount) }
+            : frequency;
 
     onSave({ name: name.trim(), frequency: frequencyValue, type });
     onClose();
@@ -113,77 +113,99 @@ export function AddHabitModal({ onSave, onClose }) {
         </div>
 
         {/* Frequency */}
-        <div style={{ marginBottom: 20 }}>
-          <label style={fieldLabelStyle}>Frequency</label>
-          <div style={{ display: "flex", gap: 6 }}>
-            <SegmentButton
-              value="daily"
-              currentValue={frequency}
-              onSelect={setFrequency}
-            >
-              Daily
-            </SegmentButton>
-            <SegmentButton
-              value="weekly"
-              currentValue={frequency}
-              onSelect={setFrequency}
-            >
-              Weekly
-            </SegmentButton>
-            <SegmentButton 
-              value="monthly" 
-              currentValue={frequency} 
-              onSelect={setFrequency}
-            >
-              Monthly
-            </SegmentButton>
-            <SegmentButton
-              value="custom"
-              currentValue={frequency}
-              onSelect={setFrequency}
-            >
-              Custom
-            </SegmentButton>
+        {type === "positive" && (
+          <div style={{ marginBottom: 20 }}>
+            <label style={fieldLabelStyle}>Frequency</label>
+            <div style={{ display: "flex", gap: 6 }}>
+              <SegmentButton
+                value="daily"
+                currentValue={frequency}
+                onSelect={setFrequency}
+              >
+                Daily
+              </SegmentButton>
+              <SegmentButton
+                value="weekly"
+                currentValue={frequency}
+                onSelect={setFrequency}
+              >
+                Weekly
+              </SegmentButton>
+              <SegmentButton
+                value="monthly"
+                currentValue={frequency}
+                onSelect={setFrequency}
+              >
+                Monthly
+              </SegmentButton>
+              <SegmentButton
+                value="custom"
+                currentValue={frequency}
+                onSelect={setFrequency}
+              >
+                Custom
+              </SegmentButton>
+            </div>
+            {(frequency === "weekly" || frequency === "monthly") && (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                  marginTop: 12,
+                }}
+              >
+                <input
+                  value={timesCountInput}
+                  placeholder={
+                    frequency === "weekly" ? "1 - 7 days" : "1 - 31 days"
+                  }
+                  onChange={(e) => {
+                    if (!/^\d*$/.test(e.target.value)) return; // block letters
+                    setTimesCountInput(e.target.value);
+                  }}
+                  onBlur={() => {
+                    const max = frequency === "weekly" ? 7 : 31;
+                    const clamped = Math.min(
+                      max,
+                      Math.max(1, Number(timesCountInput) || 1),
+                    );
+                    setTimesCountInput(String(clamped));
+                    setTimesCount(clamped);
+                  }}
+                  style={textInputStyle}
+                />
+                <span style={{ fontSize: 13, color: "#b7b7b7" }}>
+                  {frequency === "weekly" ? "times / week" : "times / month"}
+                </span>
+              </div>
+            )}
+
+            {frequency === "custom" && (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                  marginTop: 12,
+                }}
+              >
+                <span style={{ fontSize: 13, color: "#555" }}>Once every</span>
+                <input
+                  type="number"
+                  min={2}
+                  max={30}
+                  value={customDays}
+                  onChange={(event) =>
+                    setCustomDays(Number(event.target.value))
+                  }
+                  style={{ ...textInputStyle, width: 72 }}
+                />
+                <span style={{ fontSize: 13, color: "#555" }}>days</span>
+              </div>
+            )}
           </div>
-
-          {(frequency === "weekly" || frequency === "monthly")&&(
-            <div style={{display: "flex" ,alignItems: "center", gap: 10, marginTop: 12 }}>
-              <input
-                type="number"
-                min={1}
-                max={frequency === "weekly" ? 7 : 31}
-                value={timesCount}
-                onChange={e => setTimesCount(Number(e.target.value))}
-                style={textInputStyle}
-              />
-              <span style={{ fontSize: 13, color: "#b7b7b7" }}>
-                {frequency === "weekly" ? "times / week" : "times / month"}
-              </span>
-            </div>
-          )}
-
-          {frequency === "custom" && (
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 10,
-                marginTop: 12,
-              }}
-            >
-              <span style={{ fontSize: 13, color: "#555" }}>Once every</span>
-              <input
-                type="number"
-                min={2}
-                max={30}
-                value={customDays}
-                onChange={(event) => setCustomDays(Number(event.target.value))}
-                style={{ ...textInputStyle, width: 72 }}
-              />
-              <span style={{ fontSize: 13, color: "#555" }}>days</span>
-            </div>
-          )}
-        </div>
+        )}
 
         {/* Type */}
         <div style={{ marginBottom: 30 }}>
@@ -205,6 +227,17 @@ export function AddHabitModal({ onSave, onClose }) {
             </SegmentButton>
           </div>
         </div>
+
+        {type === "negative" && (
+          <div className="mb-5 p-4 border border-[#2a2a2a] rounded text-sm text-[#666] leading-relaxed">
+            You'll be checked in{" "}
+            <span className="text-[#888]">daily for the first 7 days</span>,
+            then <span className="text-[#888]">every 3 days until day 21</span>,
+            then <span className="text-[#888]">weekly</span>. Not responding
+            means you stayed clean. If you slip, your streak resets — but your
+            history stays.
+          </div>
+        )}
 
         {/* Actions */}
         <div style={{ display: "flex", justifyContent: "flex-end", gap: 10 }}>

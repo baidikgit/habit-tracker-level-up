@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react";
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  UserButton,
+} from "@clerk/clerk-react";
 
 import {
   toDateString,
@@ -12,12 +17,44 @@ import { HabitRow } from "./components/HabitRow.jsx";
 
 import { AddHabitModal } from "./components/AddHabit.jsx";
 
-//actual app
-
 export default function App() {
   const [habits, setHabits] = useState(() => {
     const saved = localStorage.getItem("levelup-habits");
-    return saved ? JSON.parse(saved) : [];
+    const loaded = saved ? JSON.parse(saved) : DEMO_HABITS;
+
+    return loaded.map((habit) => {
+      if (habit.type !== "negative") return habit;
+      const streakStart = habit.currentStreakStart || habit.createdAt;
+      const newLogs = [...habit.logs];
+
+      for (const day of ALL_365_DAYS) {
+        if (day >= TODAY) continue;
+        if (day < streakStart) continue;
+
+        const daysSince = Math.floor(
+          (new Date(day + "T12:00:00") - new Date(streakStart + "T12:00:00")) /
+            86400000,
+        );
+
+        const isDue =
+          daysSince < 7
+            ? true
+            : daysSince < 21
+              ? (daysSince - 7) % 3 === 0
+              : (daysSince - 21) % 7 === 0;
+
+        if (isDue && !habit.logs.find((l) => l.date === day)) {
+          newLogs.push({
+            date: day,
+            completed: true,
+            status: "clean",
+            fulfillment: 3,
+          });
+        }
+      }
+
+      return { ...habit, logs: newLogs };
+    });
   });
 
   useEffect(() => {
@@ -33,6 +70,7 @@ export default function App() {
       frequency: habitData.frequency,
       type: habitData.type,
       createdAt: TODAY,
+      currentStreakStart: TODAY,
       logs: [],
     };
     setHabits((prev) => [...prev, newHabit]);
@@ -64,48 +102,63 @@ export default function App() {
     );
   }
 
+  function handleBreakHabitLog(habitId) {
+    setHabits((prev) =>
+      prev.map((habit) => {
+        if (habit.id !== habitId) return habit;
+        return {
+          ...habit,
+          currentStreakStart: TODAY,
+          logs: [...habit.logs, { date: TODAY, status: "broken" }],
+        };
+      }),
+    );
+  }
+
   return (
     <>
-    
-    <div style={{ position: "absolute", top: 30, right: 50, zIndex: 50 }}>
-      
-      <SignedOut>
-        <SignInButton mode="modal">
-          <button
-            className="hover:brightness-125 hover:border-gray-500"
-            style={{
-              padding: "8px 16px",
-              
-              border: "1px solid #10b981",
-              borderRadius: 4,
-              background: "#161616",
-              fontSize: 12,
-              fontWeight: 600, 
-              letterSpacing: "0.08em",
-              color: "#10b981", 
-              cursor: "pointer",
-              textTransform: "uppercase",
-              boxShadow: "0 0 10px rgba(16, 185, 129, 0.1)",
-              transition: "all 0.15s",
-            }}
-          >
-            Sign In
-          </button>
-        </SignInButton>
-      </SignedOut>
+      <div style={{ position: "absolute", top: 30, right: 50, zIndex: 50 }}>
+        <SignedOut>
+          <SignInButton mode="modal">
+            <button
+              className="hover:brightness-125 hover:border-gray-500"
+              style={{
+                padding: "8px 16px",
 
-      {/* If logged in, show the Clerk user avatar */}
-      <SignedIn>
-          <UserButton 
-          afterSignOutUrl="/" 
-          appearance={{
-            elements: {
-              avatarBox: { width: 40, height: 40, border: "1px solid #2a2a2a" }
-            }
-          }}
-        />
-      </SignedIn>
-    </div>
+                border: "1px solid #10b981",
+                borderRadius: 4,
+                background: "#161616",
+                fontSize: 12,
+                fontWeight: 600,
+                letterSpacing: "0.08em",
+                color: "#10b981",
+                cursor: "pointer",
+                textTransform: "uppercase",
+                boxShadow: "0 0 10px rgba(16, 185, 129, 0.1)",
+                transition: "all 0.15s",
+              }}
+            >
+              Sign In
+            </button>
+          </SignInButton>
+        </SignedOut>
+
+        {/* If logged in, show the Clerk user avatar */}
+        <SignedIn>
+          <UserButton
+            afterSignOutUrl="/"
+            appearance={{
+              elements: {
+                avatarBox: {
+                  width: 40,
+                  height: 40,
+                  border: "1px solid #2a2a2a",
+                },
+              },
+            }}
+          />
+        </SignedIn>
+      </div>
 
       <div style={{ maxWidth: 800, margin: "0 auto", paddingBottom: 80 }}>
         <div
@@ -125,13 +178,13 @@ export default function App() {
                 color: "#10b981",
                 letterSpacing: "0.25em",
                 textTransform: "uppercase",
-                textShadow: '0 0 8px rgba(16, 185, 129, 0.4)',
+                textShadow: "0 0 8px rgba(16, 185, 129, 0.4)",
                 marginBottom: 8,
               }}
             >
               Level-UP
             </div>
-            
+
             <div
               style={{
                 fontSize: 35,
@@ -141,12 +194,10 @@ export default function App() {
               Habits
             </div>
           </div>
-          
-          
+
           <button
             onClick={() => setShowAddModal(true)}
             className="hover:brightness-125 shadow-[inset_1px_0px_1px_1px_#050505,inset_-1px_-1px_1px_1px_#1a1a1a]"
-            
             style={{
               padding: "10px 20px",
               borderRadius: 4,
@@ -161,7 +212,6 @@ export default function App() {
           >
             + Add Habit
           </button>
-          
         </div>
 
         <div>
@@ -186,6 +236,7 @@ export default function App() {
                 onLog={handleLog}
                 onDelete={handleDeleteHabit}
                 onEdit={handleEditHabit}
+                onBreakLog={handleBreakHabitLog}
               />
             ))
           )}

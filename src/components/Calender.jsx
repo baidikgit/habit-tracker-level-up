@@ -1,4 +1,4 @@
-import { useRef,useEffect,useState } from "react";
+import { useRef, useEffect, useState } from "react";
 import {
   toDateString,
   TODAY,
@@ -27,12 +27,15 @@ export function Calendar365({ habit, habitColor }) {
   const scrollRef = useRef(null);
   const rgbColor = hexToRgbString(habitColor);
 
-  useEffect(()=>{if(scrollRef.current){
-    scrollRef.current.scrollLeft = scrollRef.current.scrollWidth;
-  }},[]);
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollLeft = scrollRef.current.scrollWidth;
+    }
+  }, []);
 
   const firstDayOfWeek = new Date(ALL_365_DAYS[0] + "T12:00:00").getDay(); // 0=Sun
-  const paddedDays = [...Array(firstDayOfWeek).fill(null), ...ALL_365_DAYS];
+  const mondayBasedPadding = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1;
+  const paddedDays = [...Array(mondayBasedPadding).fill(null), ...ALL_365_DAYS];
 
   // Split into week columns
   const weeks = [];
@@ -69,25 +72,31 @@ export function Calendar365({ habit, habitColor }) {
           flexShrink: 0,
         }}
       >
-        {["S", "M", "T", "W", "T", "F", "S"].map((label, index) => (
-          <div
-            key={index}
-            style={{
-              height: 13,
-              width: 10,
-              fontSize: 9,
-              color: "#444",
-              fontFamily: "'Iceberg', sans-serif",
-              lineHeight: "13px",
-              textAlign: "right",
-            }}
-          >
-            {label}
-          </div>
-        ))}
+        {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(
+          (label, index) => (
+            <div
+              key={index}
+              style={{
+                paddingTop: 10,
+                height: 15,
+                width: 10,
+                fontSize: 8,
+                color: "#a0a0a0",
+                fontFamily: "'Iceberg', sans-serif",
+                lineHeight: "13px",
+                textAlign: "right",
+              }}
+            >
+              {label}
+            </div>
+          ),
+        )}
       </div>
       {/*horizontal scrolling*/}
-      <div ref={scrollRef} style={{ overflowX: "auto", paddingBottom: 4 }}>
+      <div
+        ref={scrollRef}
+        style={{ overflowX: "auto", paddingBottom: 4, paddingTop: 8 }}
+      >
         <div style={{ display: "flex", gap: 3 }}>
           {weeks.map((week, weekIndex) => (
             <div
@@ -99,9 +108,9 @@ export function Calendar365({ habit, habitColor }) {
                   key={dayIndex}
                   title={day ?? ""}
                   style={{
-                    width: 13,
-                    height: 13,
-                    borderRadius: 2,
+                    width: 15,
+                    height: 15,
+                    borderRadius: 1,
                     backgroundColor: getCellColor(day),
                     outline: day === TODAY ? "1px solid #666" : "none",
                     outlineOffset: 1,
@@ -111,6 +120,7 @@ export function Calendar365({ habit, habitColor }) {
               ))}
             </div>
           ))}
+          <div style={{ width: 5, flexShrink: 0 }} />
         </div>
       </div>
     </div>

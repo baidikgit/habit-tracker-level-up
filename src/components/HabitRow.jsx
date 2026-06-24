@@ -12,6 +12,10 @@ import {
   isCompletedOn,
   calculateMomentum,
   calculateConsistency,
+  countLogsInMonth,
+  countLogsInWeek,
+  isBreakHabitDueToday,
+  getDaysSinceStreakStart,
 } from "./statFunctions";
 
 import {
@@ -29,7 +33,14 @@ import { LogPanel } from "./LoggingPanel";
 
 import { EditHabitModal } from "./EditHabit.jsx";
 
-export function HabitRow({ habit, habitIndex, onLog, onDelete, onEdit }) {
+export function HabitRow({
+  habit,
+  habitIndex,
+  onLog,
+  onDelete,
+  onEdit,
+  onBreakLog,
+}) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isLogging, setIsLogging] = useState(false);
   const [habitToDelete, setHabitToDelete] = useState(null);
@@ -45,6 +56,16 @@ export function HabitRow({ habit, habitIndex, onLog, onDelete, onEdit }) {
 
   const canLog = dateToLog !== null;
 
+  const quotaComplete =
+    (habit.frequency?.type === "weekly_count" &&
+      countLogsInWeek(habit, TODAY) >= habit.frequency.times) ||
+    (habit.frequency?.type === "monthly_count" &&
+      countLogsInMonth(
+        habit,
+        new Date().getFullYear(),
+        new Date().getMonth(),
+      ) >= habit.frequency.times);
+
   function handleConfirmLog(effort, fulfillment) {
     onLog(habit.id, dateToLog, effort, fulfillment);
     setIsLogging(false);
@@ -53,6 +74,7 @@ export function HabitRow({ habit, habitIndex, onLog, onDelete, onEdit }) {
   const momentum = calculateMomentum(habit);
   const consistency = calculateConsistency(habit);
 
+  if (habit.type === "negative" && !isBreakHabitDueToday(habit)) return null;
   return (
     <div className="border-b border-theme-dark-grey shadow-[inset_1px_0px_1px_1px_#050505,inset_-1px_-1px_1px_1px_#1a1a1a]">
       {/* main habit row*/}
@@ -71,13 +93,21 @@ export function HabitRow({ habit, habitIndex, onLog, onDelete, onEdit }) {
             {habit.name}
           </div>
           <div className="text-[11px] text-[#888888] font-iceberg tracking-wider">
-            {formatFrequency(habit.frequency)} ·{" "}
-            {habit.type === "positive" ? "Build" : "Break"}
+            {habit.type === "negative"
+              ? `Break`
+              : `${formatFrequency(habit.frequency)} · Build`}
           </div>
         </div>
 
         {/* logging indicator*/}
-        {loggedToday ? (
+        {habit.type === "negative" ? (
+          <button
+            onClick={() => onBreakLog(habit.id)}
+            className="px-5 py-2 bg-[#1a1a1a] border border-red-900 text-red-500 rounded text-xs tracking-widest hover:bg-red-900/20 transition-all"
+          >
+            RELAPSED
+          </button>
+        ) : loggedToday || quotaComplete ? (
           <span
             style={{
               color: color,
@@ -120,7 +150,7 @@ export function HabitRow({ habit, habitIndex, onLog, onDelete, onEdit }) {
 
         <button
           title="Delete this habit"
-          onClick={() => setHabitToDelete(habitToDelete? null: habit.id)}
+          onClick={() => setHabitToDelete(habitToDelete ? null : habit.id)}
           className={`
                     px-5 py-2 rounded-[4px] bg-[#1a1a1a] text-[11px] font-semibold tracking-[0.15em] transition-all duration-150
                     hover:brightness-125

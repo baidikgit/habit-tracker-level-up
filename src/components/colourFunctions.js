@@ -26,7 +26,7 @@ export function hexToRgbString(hex) {
 // fullfilment opacity decider
 export function fulfillmentToOpacity(fulfillment) {
   if (fulfillment === 1) return 0.4;
-  if (fulfillment === 2) return 0.6;
+  if (fulfillment === 2) return 0.8;
   if (fulfillment === 3) return 1.0;
   return 0;
 }

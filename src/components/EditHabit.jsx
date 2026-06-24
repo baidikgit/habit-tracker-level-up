@@ -6,20 +6,26 @@ export function EditHabitModal({ habit, onSave, onClose }) {
     habit.frequency?.type === "custom" ? "custom" : habit.frequency,
   );
   const [customDays, setCustomDays] = useState(habit.frequency?.every ?? 2);
-  const [timesCount, setTimesCount] = useState(habit.frequency?.type === "weekly_count" || habit.frequency?.type === "monthly_count" ? habit.frequency.times : 1);
+  const [timesCount, setTimesCount] = useState(
+    habit.frequency?.type === "weekly_count" ||
+      habit.frequency?.type === "monthly_count"
+      ? habit.frequency.times
+      : 1,
+  );
   const [type, setType] = useState(habit.type);
+  const [timesCountInput, setTimesCountInput] = useState(String(timesCount));
 
   function handleSave() {
     if (!name.trim()) return;
 
     const frequencyValue =
-     frequency === "custom"
-        ? { type: "custom", every: Math.max(2,customDays) }
+      frequency === "custom"
+        ? { type: "custom", every: Math.max(2, customDays) }
         : frequency === "weekly"
-        ? {type: "weekly_count", times: Math.max(1,timesCount)}
-        : frequency === "monthly"
-        ? {type: "monthly_count", times: Math.max(1,timesCount)}
-        : frequency;
+          ? { type: "weekly_count", times: Math.max(1, timesCount) }
+          : frequency === "monthly"
+            ? { type: "monthly_count", times: Math.max(1, timesCount) }
+            : frequency;
 
     onSave({ name: name.trim(), frequency: frequencyValue, type });
     onClose();
@@ -114,97 +120,99 @@ export function EditHabitModal({ habit, onSave, onClose }) {
         </div>
 
         {/* Frequency */}
-        <div style={{ marginBottom: 20 }}>
-          <label style={fieldLabelStyle}>Frequency</label>
-          <div style={{ display: "flex", gap: 6 }}>
-            <SegmentButton
-              value="daily"
-              currentValue={frequency}
-              onSelect={setFrequency}
-            >
-              Daily
-            </SegmentButton>
-            <SegmentButton
-              value="weekly"
-              currentValue={frequency}
-              onSelect={setFrequency}
-            >
-              Weekly
-            </SegmentButton>
-            <SegmentButton 
-              value="monthly" 
-              currentValue={frequency} 
-              onSelect={setFrequency}
-            >
-              Monthly
-            </SegmentButton>
-            <SegmentButton
-              value="custom"
-              currentValue={frequency}
-              onSelect={setFrequency}
-            >
-              Custom
-            </SegmentButton>
-          </div>
-          {(frequency === "weekly" || frequency === "monthly")&&(
-            <div style={{display: "flex" ,alignItems: "center", gap: 10, marginTop: 12 }}>
-            <input
-              type="number"
-              min={1}
-              max={frequency === "weekly" ? 7 : 31}
-              value={timesCount}
-              onChange={e => setTimesCount(Number(e.target.value))}
-              style={textInputStyle}
-            />
-            <span style={{ fontSize: 13, color: "#b7b7b7" }}>
-              {frequency === "weekly" ? "times / week" : "times / month"}
-            </span>
-          </div>
-          )}
-
-          {frequency === "custom" && (
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 10,
-                marginTop: 12,
-              }}
-            >
-              <span style={{ fontSize: 13, color: "#555" }}>Every</span>
-              <input
-                type="number"
-                min={2}
-                max={30}
-                value={customDays}
-                onChange={(event) => setCustomDays(Number(event.target.value))}
-                style={{ ...textInputStyle, width: 72 }}
-              />
-              <span style={{ fontSize: 13, color: "#555" }}>days</span>
+        {type === "positive" && (
+          <div style={{ marginBottom: 20 }}>
+            <label style={fieldLabelStyle}>Frequency</label>
+            <div style={{ display: "flex", gap: 6 }}>
+              <SegmentButton
+                value="daily"
+                currentValue={frequency}
+                onSelect={setFrequency}
+              >
+                Daily
+              </SegmentButton>
+              <SegmentButton
+                value="weekly"
+                currentValue={frequency}
+                onSelect={setFrequency}
+              >
+                Weekly
+              </SegmentButton>
+              <SegmentButton
+                value="monthly"
+                currentValue={frequency}
+                onSelect={setFrequency}
+              >
+                Monthly
+              </SegmentButton>
+              <SegmentButton
+                value="custom"
+                currentValue={frequency}
+                onSelect={setFrequency}
+              >
+                Custom
+              </SegmentButton>
             </div>
-          )}
-        </div>
+            {(frequency === "weekly" || frequency === "monthly") && (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                  marginTop: 12,
+                }}
+              >
+                <input
+                  value={timesCountInput}
+                  placeholder={
+                    frequency === "weekly" ? "1 - 7 days" : "1 - 31 days"
+                  }
+                  onChange={(e) => {
+                    if (!/^\d*$/.test(e.target.value)) return; // block letters
+                    setTimesCountInput(e.target.value);
+                  }}
+                  onBlur={() => {
+                    const max = frequency === "weekly" ? 7 : 31;
+                    const clamped = Math.min(
+                      max,
+                      Math.max(1, Number(timesCountInput) || 1),
+                    );
+                    setTimesCountInput(String(clamped));
+                    setTimesCount(clamped);
+                  }}
+                  style={textInputStyle}
+                />
+                <span style={{ fontSize: 13, color: "#b7b7b7" }}>
+                  {frequency === "weekly" ? "times / week" : "times / month"}
+                </span>
+              </div>
+            )}
 
-        {/* Type */}
-        <div style={{ marginBottom: 30 }}>
-          <label style={fieldLabelStyle}>Type</label>
-          <div style={{ display: "flex", gap: 6 }}>
-            <SegmentButton
-              value="positive"
-              currentValue={type}
-              onSelect={setType}
-            >
-              Build (positive)
-            </SegmentButton>
-            <SegmentButton
-              value="negative"
-              currentValue={type}
-              onSelect={setType}
-            >
-              Break (negative)
-            </SegmentButton>
+            {frequency === "custom" && (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                  marginTop: 12,
+                }}
+              >
+                <span style={{ fontSize: 13, color: "#555" }}>Every</span>
+                <input
+                  type="number"
+                  min={2}
+                  max={30}
+                  value={customDays}
+                  onChange={(event) =>
+                    setCustomDays(Number(event.target.value))
+                  }
+                  style={{ ...textInputStyle, width: 72 }}
+                />
+                <span style={{ fontSize: 13, color: "#555" }}>days</span>
+              </div>
+            )}
           </div>
-        </div>
+        )}
 
         {/* Actions */}
         <div style={{ display: "flex", justifyContent: "flex-end", gap: 10 }}>
