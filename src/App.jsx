@@ -22,47 +22,7 @@ export default function App() {
     const saved = localStorage.getItem("levelup-habits");
     const loaded = saved ? JSON.parse(saved) : DEMO_HABITS;
 
-    const DEMO_HABITS = [
-      {
-        id: "demo-1",
-        name: "Morning workout",
-        frequency: "daily",
-        type: "positive",
-        createdAt: "2026-07-01",
-        currentStreakStart: "2026-07-15",
-        logs: [
-          { date: "2026-07-18", completed: true },
-          { date: "2026-07-19", completed: true },
-          { date: "2026-07-20", completed: true },
-        ],
-      },
-      {
-        id: "demo-2",
-        name: "Read 20 pages",
-        frequency: { type: "weekly_count", times: 5 },
-        type: "positive",
-        createdAt: "2026-07-05",
-        currentStreakStart: "2026-07-05",
-        logs: [
-          { date: "2026-07-17", completed: true },
-          { date: "2026-07-19", completed: true },
-        ],
-      },
-      {
-        id: "demo-3",
-        name: "No junk food",
-        frequency: "daily",
-        type: "negative",
-        createdAt: "2026-07-10",
-        currentStreakStart: "2026-07-16",
-        logs: [
-          { date: "2026-07-16", completed: true },
-          { date: "2026-07-17", completed: true },
-          { date: "2026-07-18", completed: false },
-          { date: "2026-07-19", completed: true },
-        ],
-      },
-    ];
+    DEMO_HABITS = {};
 
     return loaded.map((habit) => {
       if (habit.type !== "negative") return habit;
