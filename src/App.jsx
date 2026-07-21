@@ -19,10 +19,9 @@ import { AddHabitModal } from "./components/AddHabit.jsx";
 
 export default function App() {
   const [habits, setHabits] = useState(() => {
+    const DEMO_HABITS = [];
     const saved = localStorage.getItem("levelup-habits");
     const loaded = saved ? JSON.parse(saved) : DEMO_HABITS;
-
-    DEMO_HABITS = {};
 
     return loaded.map((habit) => {
       if (habit.type !== "negative") return habit;
