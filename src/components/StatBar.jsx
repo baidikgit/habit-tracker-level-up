@@ -21,7 +21,6 @@ import {
   fulfillmentToOpacity,
 } from "./colourFunctions";
 
-
 export function StatBar({ label, value, maxValue, displayValue, color }) {
   const fillPercent = Math.min((value / maxValue) * 100, 100);
 

@@ -1,11 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   SignedIn,
   SignedOut,
   SignInButton,
   UserButton,
+  useSession,
+  useUser,
 } from "@clerk/clerk-react";
-
+import { createClerkSupabaseClient } from "./supabaseClient";
 import {
   toDateString,
   TODAY,
@@ -18,33 +20,35 @@ import { HabitRow } from "./components/HabitRow.jsx";
 import { AddHabitModal } from "./components/AddHabit.jsx";
 
 export default function App() {
-  const [habits, setHabits] = useState(() => {
-    const DEMO_HABITS = [];
-    const saved = localStorage.getItem("levelup-habits");
-    const loaded = saved ? JSON.parse(saved) : DEMO_HABITS;
+  const { session } = useSession();
+  const { user } = useUser();
+  const supabase = useMemo(() => {
+    if (!session) return null;
+    return createClerkSupabaseClient(session);
+  }, [session]);
 
-    return loaded.map((habit) => {
-      if (habit.type !== "negative") return habit;
-      const streakStart = habit.currentStreakStart || habit.createdAt;
-      const newLogs = [...habit.logs];
+  const [habits, setHabits] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-      for (const day of ALL_365_DAYS) {
-        if (day >= TODAY) continue;
-        if (day < streakStart) continue;
+  useEffect(() => {
+    if (!user || !supabase) return;
+    async function load() {
+      const { data } = await supabase
+        .from("habits")
+        .select("*")
+        .eq("user_id", user.id);
 
-        const daysSince = Math.floor(
-          (new Date(day + "T12:00:00") - new Date(streakStart + "T12:00:00")) /
-            86400000,
-        );
+      // backfill clean logs for break habits
+      const processed = (data ?? []).map((habit) => {
+        if (habit.type !== "negative") return habit;
+        const streakStart = habit.currentStreakStart || habit.createdAt;
+        const newLogs = [...habit.logs];
 
-        const isDue =
-          daysSince < 7
-            ? true
-            : daysSince < 21
-              ? (daysSince - 7) % 3 === 0
-              : (daysSince - 21) % 7 === 0;
+        for (const day of ALL_365_DAYS) {
+          if (day >= TODAY) continue;
+          if (day < streakStart) continue;
+          if (habit.logs.find((l) => l.date === day)) continue;
 
-        if (isDue && !habit.logs.find((l) => l.date === day)) {
           newLogs.push({
             date: day,
             completed: true,
@@ -52,15 +56,22 @@ export default function App() {
             fulfillment: 3,
           });
         }
-      }
 
-      return { ...habit, logs: newLogs };
-    });
-  });
+        return { ...habit, logs: newLogs };
+      });
+
+      setHabits(processed);
+      setLoading(false);
+    }
+    load();
+  }, [user, supabase]);
 
   useEffect(() => {
-    localStorage.setItem("levelup-habits", JSON.stringify(habits));
-  }, [habits]);
+    if (!user || !supabase || loading) return;
+    habits.forEach(async (habit) => {
+      await supabase.from("habits").upsert({ ...habit, user_id: user.id });
+    });
+  }, [habits, user, supabase]);
 
   const [showAddModal, setShowAddModal] = useState(false);
 
@@ -85,7 +96,8 @@ export default function App() {
     );
   }
 
-  function handleDeleteHabit(habitId) {
+  async function handleDeleteHabit(habitId) {
+    await supabase.from("habits").delete().eq("id", habitId);
     setHabits((prev) => prev.filter((habit) => habit.id != habitId));
   }
 

@@ -12,6 +12,7 @@
   "dependencies": {
     "@clerk/clerk-react": "^5.61.8",
     "@clerk/themes": "^2.4.57",
+    "@supabase/supabase-js": "^2.110.9",
     "@tailwindcss/vite": "^4.2.4",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",

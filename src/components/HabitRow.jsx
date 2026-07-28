@@ -72,6 +72,7 @@ export function HabitRow({
   }
 
   const momentum = calculateMomentum(habit);
+  const streak = getDaysSinceStreakStart(habit);
   const consistency = calculateConsistency(habit);
 
   if (habit.type === "negative" && !isBreakHabitDueToday(habit)) return null;
@@ -243,13 +244,24 @@ export function HabitRow({
                 displayValue={momentum}
                 color={color}
               />
-              <StatBar
-                label="Consistency"
-                value={consistency}
-                maxValue={100}
-                displayValue={`${consistency}%`}
-                color={color}
-              />
+              {habit.type === "negative" && (
+                <StatBar
+                  label="Streak"
+                  value={streak}
+                  maxValue={Math.max(streak, 66)}
+                  displayValue={streak}
+                  color={color}
+                />
+              )}
+              {habit.type === "positive" && (
+                <StatBar
+                  label="Consistency"
+                  value={consistency}
+                  maxValue={100}
+                  displayValue={`${consistency}%`}
+                  color={color}
+                />
+              )}
             </div>
           </div>
         </div>
