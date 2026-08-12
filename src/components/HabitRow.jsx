@@ -43,7 +43,7 @@ export function HabitRow({
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isLogging, setIsLogging] = useState(false);
-  const [habitToDelete, setHabitToDelete] = useState(null);
+  const [habitToDelete, setHabitToDelete] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
   const color = getHabitColor(habitIndex);
@@ -77,129 +77,118 @@ export function HabitRow({
 
   if (habit.type === "negative" && !isBreakHabitDueToday(habit)) return null;
   return (
-    <div className="border-b border-theme-dark-grey shadow-[inset_1px_0px_1px_1px_#050505,inset_-1px_-1px_1px_1px_#1a1a1a]">
-      {/* main habit row*/}
-      <div className="flex items-center px-6 py-4 gap-4">
-        <div
-          className="w-[3px] h-[38px] rounded-[2px] shrink-0"
-          style={{ backgroundColor: color }}
-        />
+    <div className="px-1 py-1">
+      <div className="border-b border-theme-dark-grey shadow-[inset_1px_0px_1px_1px_#050505,inset_-1px_-1px_1px_1px_#1a1a1a]">
+        {/* main habit row*/}
 
-        {/* habit expands to stats */}
-        <div
-          onClick={() => setIsExpanded((prev) => !prev)}
-          className="flex-1 cursor-pointer"
-        >
-          <div className="font-size-[18px] font-normal mb-[3px]">
-            {habit.name}
-          </div>
-          <div className="text-[11px] text-[#888888] font-iceberg tracking-wider">
-            {habit.type === "negative"
-              ? `Break`
-              : `${formatFrequency(habit.frequency)} · Build`}
-          </div>
-        </div>
+        <div className="relative flex flex-wrap items-center px-4 sm: px-2 py-4 sm: py-2 gap-3 pr-12 sm:gap-4">
+          <div
+            className="w-[3px] h-[38px] rounded-[2px] shrink-0"
+            style={{ backgroundColor: color }}
+          />
 
-        {/* logging indicator*/}
-        {habit.type === "negative" ? (
-          <button
-            onClick={() => onBreakLog(habit.id)}
-            className="px-5 py-2 bg-[#1a1a1a] border border-red-900 text-red-500 rounded text-xs tracking-widest hover:bg-red-900/20 transition-all"
+          {/* habit expands to stats */}
+          <div
+            onClick={() => setIsExpanded((prev) => !prev)}
+            className="flex-1 min-w-[75px] cursor-pointer"
           >
-            RELAPSED
-          </button>
-        ) : loggedToday || quotaComplete ? (
-          <span
-            style={{
-              color: color,
-            }}
-            className="font-iceberg text-[10px] tracking-[0.15em]"
-          >
-            Accomplished
-          </span>
-        ) : canLog ? (
-          <button
-            title="Log for today"
-            onClick={() => setIsLogging((prev) => !prev)}
-            className={`
+            <div className="text-[14px] sm:text-[18px] font-normal mb-[3px]">
+              {habit.name}
+            </div>
+            <div className="text-[11px] text-[#888888] font-iceberg tracking-wider">
+              {habit.type === "negative"
+                ? `Break`
+                : `${formatFrequency(habit.frequency)} · Build`}
+            </div>
+          </div>
+
+          {/* logging indicator*/}
+          <div className="ml-auto shrink-0">
+            {habit.type === "negative" ? (
+              <button
+                onClick={() => onBreakLog(habit.id)}
+                className="px-5 py-2 bg-[#1a1a1a] border border-red-900 text-red-500 rounded text-xs tracking-widest hover:bg-red-900/20 transition-all"
+              >
+                RELAPSED
+              </button>
+            ) : loggedToday || quotaComplete ? (
+              <span
+                style={{
+                  color: color,
+                }}
+                className="font-iceberg text-[10px] tracking-[0.15em]"
+              >
+                Accomplished
+              </span>
+            ) : canLog ? (
+              <button
+                title="Log for today"
+                onClick={() => setIsLogging((prev) => !prev)}
+                className={`
                         px-5 py-2 rounded-[4px] bg-[#1a1a1a] text-[11px] font-semibold tracking-[0.15em] transition-all duration-150
                         hover:brightness-125
                         ${isLogging ? "border-[#2a2a2a] text-[#555]" : "border-[#2a2a2a] text-[#999]"}
                         border
                       `}
-          >
-            {isLogging ? "CANCEL" : "LOG"}
-          </button>
-        ) : (
-          <span className="font-iceberg text-[14px] text-[#4a4a4a] tracking-[0.12em]">
-            NOT DUE
-          </span>
-        )}
-
-        <button
-          className={`
-                    px-5 py-2 rounded-[4px] bg-[#1a1a1a] text-[11px] font-semibold tracking-[0.15em] transition-all duration-150
-                    hover:brightness-125
-                    ${isLogging ? "border-[#2a2a2a] text-[#555]" : "border-[#2a2a2a] text-[#999]"}
-                    border
-                  `}
-          title="Edit this habit"
-          onClick={() => setIsEditing(true)}
-        >
-          ✎
-        </button>
-
-        <button
-          title="Delete this habit"
-          onClick={() => setHabitToDelete(habitToDelete ? null : habit.id)}
-          className={`
-                    px-5 py-2 rounded-[4px] bg-[#1a1a1a] text-[11px] font-semibold tracking-[0.15em] transition-all duration-150
-                    hover:brightness-125
-                    ${isLogging ? "border-[#2a2a2a] text-[#555]" : "border-[#2a2a2a] text-[#999]"}
-                    border
-                  `}
-        >
-          ✕
-        </button>
-
-        {isEditing && (
-          <EditHabitModal
-            habit={habit}
-            onSave={(updatedData) => {
-              onEdit(habit.id, updatedData);
-              setIsEditing(false);
-            }}
-            onClose={() => setIsEditing(false)}
-          />
-        )}
-
-        {/*delete prompt*/}
-        <div
-          className={`flex-shrink-0 transition-all duration-200 ease-in-out overflow-hidden ${habitToDelete ? "max-w-xs opacity-100" : "max-w-0 opacity-0"}`}
-        >
-          <div className="pl-4 flex items-center gap-4 whitespace-nowrap">
-            <p className="text-m text-[#888]">Delete this habit?</p>
-            <button
-              onClick={() => {
-                onDelete(habitToDelete);
-                setHabitToDelete(null);
-              }}
-              className="text-red-500 text-sm hover:brightness-150"
-            >
-              Yes
-            </button>
-            <button
-              onClick={() => setHabitToDelete(null)}
-              className="text-[#555] text-sm hover:brightness-150"
-            >
-              Cancel
-            </button>
+              >
+                {isLogging ? "CANCEL" : "LOG"}
+              </button>
+            ) : (
+              <span className="font-iceberg text-[14px] text-[#4a4a4a] tracking-[0.12em]">
+                NOT DUE
+              </span>
+            )}
           </div>
-        </div>
-        {/* expand the menu */}
-        <div
-          onClick={() => setIsExpanded((prev) => !prev)}
-          className={`
+          <button
+            title="Delete this habit"
+            onClick={() => setHabitToDelete(true)}
+            className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded-full text-[#555] text-[13px] hover:text-red-500 hover:bg-red-900/10 transition-all"
+          >
+            ✕
+          </button>
+          <button
+            className="absolute bottom-2 right-2 w-6 h-6 flex items-center justify-center rounded-full text-[#555] text-[13px] hover:text-[#999] hover:bg-white/5 transition-all"
+            title="Edit this habit"
+            onClick={() => setIsEditing(true)}
+          >
+            ✎
+          </button>
+          {isEditing && (
+            <EditHabitModal
+              habit={habit}
+              onSave={(updatedData) => {
+                onEdit(habit.id, updatedData);
+                setIsEditing(false);
+              }}
+              onClose={() => setIsEditing(false)}
+            />
+          )}
+
+          {/*delete prompt*/}
+          {habitToDelete && (
+            <div className="absolute inset-0 z-10 flex items-center justify-center gap-4 bg-[#0d0d0d]/95 backdrop-blur-sm">
+              <p className="text-m text-[#888]">Delete this habit?</p>
+              <button
+                onClick={() => {
+                  onDelete(habit.id);
+                  setHabitToDelete(false);
+                }}
+                className="text-red-500 text-sm hover:brightness-150"
+              >
+                Yes
+              </button>
+              <button
+                onClick={() => setHabitToDelete(false)}
+                className="text-[#555] text-sm hover:brightness-150"
+              >
+                Cancel
+              </button>
+            </div>
+          )}
+          {/* expand the menu */}
+          <div
+            onClick={() => setIsExpanded((prev) => !prev)}
+            className={`
                     text-[#333] 
                     text-[12px] 
                     cursor-pointer 
@@ -208,60 +197,59 @@ export function HabitRow({
                     duration-200 
                     ${isExpanded ? "rotate-180" : "rotate-0"}
                   `}
+          ></div>
+        </div>
+
+        {/* logging panel */}
+        <div
+          className={`grid transition-all duration-200 ease-in-out ${isLogging ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
         >
-          ▾
-        </div>
-      </div>
-
-      {/* logging panel */}
-      <div
-        className={`grid transition-all duration-200 ease-in-out ${isLogging ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
-      >
-        <div className="overflow-hidden">
-          {
-            <LogPanel
-              habitColor={color}
-              onConfirm={handleConfirmLog}
-              onCancel={() => setIsLogging(false)}
-            />
-          }
-        </div>
-      </div>
-
-      {/* expanded stats bars */}
-      <div
-        className={`grid transition-all duration-200 ease-in-out ${isExpanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
-      >
-        <div className="overflow-hidden">
-          <div className="pt-[22px] px-[24px] pb-[28px] border-t border-[#1a1a1a] bg-[#0d0d0d] shadow-[inset_1px_1px_1px_1px_#050505,inset_-1px_-1px_1px_1px_#1a1a1a]">
-            <Calendar365 habit={habit} habitColor={color} />
-
-            <div className="mt-[26px]">
-              <StatBar
-                label="Momentum"
-                value={momentum}
-                maxValue={Math.max(momentum, 30)}
-                displayValue={momentum}
-                color={color}
+          <div className="overflow-hidden">
+            {
+              <LogPanel
+                habitColor={color}
+                onConfirm={handleConfirmLog}
+                onCancel={() => setIsLogging(false)}
               />
-              {habit.type === "negative" && (
+            }
+          </div>
+        </div>
+
+        {/* expanded stats bars */}
+        <div
+          className={`grid transition-all duration-200 ease-in-out ${isExpanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
+        >
+          <div className="overflow-hidden">
+            <div className="pt-[22px] px-[24px] pb-[28px] border-t border-[#1a1a1a] bg-[#0d0d0d] shadow-[inset_1px_1px_1px_1px_#050505,inset_-1px_-1px_1px_1px_#1a1a1a]">
+              <Calendar365 habit={habit} habitColor={color} />
+
+              <div className="mt-[26px]">
                 <StatBar
-                  label="Streak"
-                  value={streak}
-                  maxValue={Math.max(streak, 66)}
-                  displayValue={streak}
+                  label="Momentum"
+                  value={momentum}
+                  maxValue={Math.max(momentum, 30)}
+                  displayValue={momentum}
                   color={color}
                 />
-              )}
-              {habit.type === "positive" && (
-                <StatBar
-                  label="Consistency"
-                  value={consistency}
-                  maxValue={100}
-                  displayValue={`${consistency}%`}
-                  color={color}
-                />
-              )}
+                {habit.type === "negative" && (
+                  <StatBar
+                    label="Streak"
+                    value={streak}
+                    maxValue={Math.max(streak, 66)}
+                    displayValue={streak}
+                    color={color}
+                  />
+                )}
+                {habit.type === "positive" && (
+                  <StatBar
+                    label="Consistency"
+                    value={consistency}
+                    maxValue={100}
+                    displayValue={`${consistency}%`}
+                    color={color}
+                  />
+                )}
+              </div>
             </div>
           </div>
         </div>

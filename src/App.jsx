@@ -97,8 +97,10 @@ export default function App() {
   }
 
   async function handleDeleteHabit(habitId) {
-    await supabase.from("habits").delete().eq("id", habitId);
-    setHabits((prev) => prev.filter((habit) => habit.id != habitId));
+    setHabits((prev) => prev.filter((habit) => habit.id !== habitId)); // update UI immediately
+    if (!supabase) return; // no backend yet — skip persistence
+    const { error } = await supabase.from("habits").delete().eq("id", habitId);
+    if (error) console.error("Delete failed:", error);
   }
 
   function handleLog(habitId, date, effort, fulfillment) {

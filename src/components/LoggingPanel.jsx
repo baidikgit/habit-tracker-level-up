@@ -30,9 +30,9 @@ export function LogPanel({ habitColor, onConfirm, onCancel }) {
 
   const EFFORT_LABELS = ["Brutal", "Hard", "Moderate", "Easy", "Effortless"];
   const FULFILLMENT_OPTIONS = [
-    { value: 1, label: "Minimum Threshold" },
-    { value: 2, label: "Standard Goals Hit" },
-    { value: 3, label: "Exceeded Expectations" },
+    { value: 1, label: "Minimal" },
+    { value: 2, label: "Standard" },
+    { value: 3, label: "Exceptional" },
   ];
 
   function activeButtonStyle(isActive) {
@@ -74,19 +74,19 @@ export function LogPanel({ habitColor, onConfirm, onCancel }) {
   //       </div>
 
   return (
-    <div className="pt-[20px] px-[24px] pb-[24px] border-t border-[#1a1a1a] bg-[#0f0f0f] shadow-[inset_1px_1px_1px_1px_#050505,inset_-1px_-1px_1px_1px_#1a1a1a]">
+    <div className="pt-[20px] px-4 sm:px-[24px] pb-[24px] border-t border-[#1a1a1a] bg-[#0f0f0f] shadow-[inset_1px_1px_1px_1px_#050505,inset_-1px_-1px_1px_1px_#1a1a1a]">
       {/* fulfillments */}
       <div className="mb-[22px]">
         <div className="text-[10px] text-[#C9C9C9] tracking-[0.18em] uppercase font-iceberg mb-[10px]">
           How well do you think you did?
         </div>
 
-        <div className="flex gap-[8px]">
+        <div className="flex flex-wrap gap-2 sm:gap-[8px]">
           {FULFILLMENT_OPTIONS.map(({ value, label }) => (
             <button
               key={value}
               onClick={() => setFulfillment(value)}
-              className="py-[8px] px-[18px] text-[13px] hover:brightness-125 hover:border-gray-500"
+              className="py-2 px-3 sm:py-[8px] sm:px-[18px] text-[13px] hover:brightness-125 hover:border-gray-500"
               style={{
                 ...activeButtonStyle(fulfillment === value),
               }}
