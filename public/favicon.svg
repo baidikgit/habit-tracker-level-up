@@ -1,25 +1,16 @@
-<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-  <!-- Background -->
-  <rect width="64" height="64" rx="12" fill="#111111"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64"><metadata><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/"><rdf:Description><dc:creator>RealFaviconGenerator</dc:creator><dc:source>https://realfavicongenerator.net</dc:source></rdf:Description></rdf:RDF></metadata><rect width="64" height="64" rx="12" fill="#111111"></rect><g fill="none" stroke="#ffffff" stroke-width="2">
+    <rect x="14" y="14" width="10" height="10" rx="2"></rect>
+    <rect x="27" y="14" width="10" height="10" rx="2"></rect>
+    <rect x="40" y="14" width="10" height="10" rx="2"></rect>
 
-  <!-- Grid (habit tracker boxes) -->
-  <g fill="none" stroke="#ffffff" stroke-width="2">
-    <rect x="14" y="14" width="10" height="10" rx="2"/>
-    <rect x="27" y="14" width="10" height="10" rx="2"/>
-    <rect x="40" y="14" width="10" height="10" rx="2"/>
+    <rect x="14" y="27" width="10" height="10" rx="2"></rect>
+    <rect x="27" y="27" width="10" height="10" rx="2"></rect>
+    <rect x="40" y="27" width="10" height="10" rx="2"></rect>
 
-    <rect x="14" y="27" width="10" height="10" rx="2"/>
-    <rect x="27" y="27" width="10" height="10" rx="2"/>
-    <rect x="40" y="27" width="10" height="10" rx="2"/>
-
-    <rect x="14" y="40" width="10" height="10" rx="2"/>
-    <rect x="27" y="40" width="10" height="10" rx="2"/>
-    <rect x="40" y="40" width="10" height="10" rx="2"/>
-  </g>
-
-  <!-- Checkmarks (completed habits) -->
-  <g fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M16 32 L19 35 L23 29"/>
-    <path d="M29 45 L32 48 L36 42"/>
-  </g>
-</svg>
+    <rect x="14" y="40" width="10" height="10" rx="2"></rect>
+    <rect x="27" y="40" width="10" height="10" rx="2"></rect>
+    <rect x="40" y="40" width="10" height="10" rx="2"></rect>
+  </g><g fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M16 32 L19 35 L23 29"></path>
+    <path d="M29 45 L32 48 L36 42"></path>
+  </g></svg>

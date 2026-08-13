@@ -132,13 +132,13 @@ export default function App() {
 
   return (
     <>
-      <div style={{ position: "absolute", top: 30, right: 50, zIndex: 50 }}>
+      <div style={{ position: "absolute", top: 50, right: 50, zIndex: 50 }}>
         <SignedOut>
           <SignInButton mode="modal">
             <button
               className="hover:brightness-125 hover:border-gray-500"
               style={{
-                padding: "8px 16px",
+                padding: "6px 14px",
 
                 border: "1px solid #10b981",
                 borderRadius: 4,
@@ -165,8 +165,8 @@ export default function App() {
             appearance={{
               elements: {
                 avatarBox: {
-                  width: 40,
-                  height: 40,
+                  width: 28,
+                  height: 28,
                   border: "1px solid #2a2a2a",
                 },
               },
