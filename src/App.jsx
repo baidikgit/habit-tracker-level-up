@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import {
   SignedIn,
   SignedOut,
@@ -27,18 +27,35 @@ export default function App() {
     return createClerkSupabaseClient(session);
   }, [session]);
 
-  const [habits, setHabits] = useState([]);
+  const [habits, setHabits] = useState(() => {
+    const saved = localStorage.getItem("levelup_habits");
+    return saved ? JSON.parse(saved) : [];
+  });
   const [loading, setLoading] = useState(true);
+  const migratedRef = useRef(false);
 
   useEffect(() => {
     if (!user || !supabase) return;
-    async function load() {
+
+    async function loadAndMigrate() {
+      setLoading(true);
+
+      const localSaved = localStorage.getItem("levelup_habits");
+      const localHabits = localSaved ? JSON.parse(localSaved) : [];
+
+      if (localHabits.length > 0 && !migratedRef.current) {
+        migratedRef.current = true;
+        for (const habit of localHabits) {
+          await supabase.from("habits").upsert({ ...habit, user_id: user.id });
+        }
+        localStorage.removeItem("levelup_habits");
+      }
+
       const { data } = await supabase
         .from("habits")
         .select("*")
         .eq("user_id", user.id);
 
-      // backfill clean logs for break habits
       const processed = (data ?? []).map((habit) => {
         if (habit.type !== "negative") return habit;
         const streakStart = habit.currentStreakStart || habit.createdAt;
@@ -62,9 +79,16 @@ export default function App() {
 
       setHabits(processed);
       setLoading(false);
+      localStorage.setItem("levelup_habits", JSON.stringify(processed));
     }
-    load();
+
+    loadAndMigrate();
   }, [user, supabase]);
+
+  useEffect(() => {
+    if (user) return;
+    localStorage.setItem("levelup_habits", JSON.stringify(habits));
+  }, [habits, user]);
 
   useEffect(() => {
     if (!user || !supabase || loading) return;
